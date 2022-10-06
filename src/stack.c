@@ -2,10 +2,14 @@
 
 void push(struct stack **root, char s) {
   struct stack *new = (struct stack *)malloc(sizeof(struct stack));
-  struct stack *tmp = *root;
-  new->c = s;
-  new->next = tmp;
-  *root = new;
+  if (new) {
+    struct stack *tmp = *root;
+    new->c = s;
+    new->next = tmp;
+    *root = new;
+  } else {
+    printf("Malloc memory fail.\n");
+  }
 }
 
 char pop(struct stack **root) {
@@ -15,6 +19,12 @@ char pop(struct stack **root) {
   free(head);
   (*root) = tmp;
   return s;
+}
+
+char peek(struct stack* root) {
+  char c = 0;
+  if (root) c = root->c;
+  return c;
 }
 
 void destroy(struct stack **root) {

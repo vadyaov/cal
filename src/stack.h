@@ -10,6 +10,7 @@ struct stack {
 
 void push(struct stack** root, char c);
 char pop(struct stack** root);
+char peek(struct stack* root);
 void destroy(struct stack** root);
 void print_stack(struct stack* root);
 
