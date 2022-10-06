@@ -10,16 +10,18 @@ char *polish(const char *input, int *err) {
     if (new_input) {
       int future_spaces = fspaces(new_input),
           future_symbol = fsymbol(new_input);
-      output = calloc(future_spaces + future_symbol + 1, sizeof(char));
+      output = calloc(future_spaces + future_symbol + 2, sizeof(char));
       out_start = output;
       if (output) {
+        int k = 0, max = future_spaces + future_symbol;
         char a;
         while ((a = *new_input) != '\0' && !*err) {
           if (is_number(a)) {
             int i = 0;
             output = put_in_out(new_input, output, &i);
+            k += i;
             new_input += i - 1;
-            *output++ = ' ';
+            if (k < max) *output++ = ' ';
           } else if (is_function(a) || a == '(') {
             push(&root, a);
           } else if (a == ')') {
@@ -28,19 +30,20 @@ char *polish(const char *input, int *err) {
                 *err = 1;
               else {
                 *output++ = pop(&root);
-                *output++ = ' ';
+                k++;
+                if (k < max) *output++ = ' ';
               }
             }
             if (!*err) pop(&root);
           } else if (is_operator_not_bracket(a)) {
-            print_stack(root);
             if (root) {
               char b = peek(root);
               int pr = give_priority(a);
               while (b && (is_function(b) || (is_operator_not_bracket(b) &&
                                               give_priority(b) >= pr))) {
                 *output++ = pop(&root);
-                *output++ = ' ';
+                k++;
+                if (k < max) *output++ = ' ';
                 b = peek(root);
               }
             }
@@ -51,10 +54,10 @@ char *polish(const char *input, int *err) {
         free(input_start);
         while (root && !*err) {
           char b = peek(root);
-          print_stack(root);
           if (is_operator_not_bracket(b) || is_function(b)) {
             *output++ = pop(&root);
-            *output++ = ' ';
+            k++;
+            if (k < max) *output++ = ' ';
           } else {
             printf("Error!\n");
             *err = 1;
@@ -81,7 +84,7 @@ char *pretty_input(const char *input, int *error) {
   const char *buf = input;
   char *perfect = NULL;
   char *no_del_input = NULL;
-  int i = 0, j = 0, bad = 0;
+  int i = 0, bad = 0;
   while (buf[i] != '\0' && !bad) {
     if (is_valid_symb(buf[i], symbols)) symbols_count++;
     if (is_bad_symb(buf[i], symbols)) bad = 1;
@@ -90,6 +93,7 @@ char *pretty_input(const char *input, int *error) {
   if (!bad) {
     no_del_input = calloc(symbols_count + 1, sizeof(char));
     if (no_del_input) {
+      int j = 0;
       for (i = 0; buf[i] != '\0'; i++) {
         if (is_valid_symb(buf[i], symbols)) {
           no_del_input[j] = buf[i];
@@ -137,24 +141,21 @@ char hash(const char *src, int *n, int *replace) {
   return out;
 }
 
-int count_bracket(const char *src) {
-  int n = 0;
-  while (*src != '\0') {
-    if (*src == '(' || *src == ')') n++;
-    src++;
-  }
-  return n;
-}
-
 int is_number(char c) { return (c >= '0' && c <= '9'); }
 
 int is_letter(char c) { return (c >= 'a' && c <= 'z'); }
 
-int is_operator(char c) { return (strchr("()+-/*^", c) ? 1 : 0); }
+int is_operator(char c) { 
+  char op[] = "()+-/*^";
+  return (strchr(op, c) ? 1 : 0);
+}
 
-int is_operator_not_bracket(char c) { return (strchr("m+-/*^", c) ? 1 : 0); };
+int is_operator_not_bracket(char c) { 
+  char op[] = "m+-/*^";
+  return (strchr(op, c) ? 1 : 0);
+}
 
-int is_function(char c) { return (strchr("scrSCTqlg", c) ? 1 : 0); }
+int is_function(char c) { return (strchr("sctSCTqlg", c) ? 1 : 0); }
 
 char *put_in_out(const char *number_pointer, char *output, int *i) {
   int pointflag = 0;
@@ -176,8 +177,8 @@ char *space_btw(char *src, int *error) {
   char *buf = NULL;
   int probel = 0, replace = 0;
   for (int i = 0; src[i] != '\0' && !*error;) {
-    int pointflag = 0;
     if (is_number(src[i])) {
+      int pointflag = 0;
       while ((is_number(src[i]) || src[i] == '.') && pointflag < 2 &&
              src[i] != '\0') {
         if (src[i] == '.') pointflag++;
@@ -199,27 +200,24 @@ char *space_btw(char *src, int *error) {
     if (src[i] != '\0') i++;
   }
   if (!*error) {
-    out = calloc(length + probel, sizeof(char));
+    out = calloc(length + probel + 2, sizeof(char));
     buf = out;
     if (out) {
       int i = 0, j = 0;
-      for (; src[i] != '\0';) {
+      while (src[i] != '\0') {
         if (is_number(src[i])) {
           out = put_in_out(src + i, out, &i);
-          if (src[i]) *out++ = ' ';
-        } else if (is_operator(src[i]) && src[i] != '\0') {
+        } else if (is_operator(src[i])) {
           *out++ = src[i];
-          *out++ = ' ';
           i++;
         } else if (is_letter(src[i])) {
           if (hash(src + i, &j, &replace)) {
             *out++ = hash(src + i, &i, &replace);
-            *out++ = ' ';
           }
         }
-        printf("%c\n", src[i]);
+        if (src[i]) *out++ = ' ';
       }
-      *(out - 1) = '\0';
+      *out = '\0';
     } else {
       printf("Malloc memory fail\n");
     }
