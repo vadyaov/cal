@@ -1,7 +1,7 @@
 #include "test.h"
 
 START_TEST(polish_t1) {
-  char input[] = "";
+  char input[] = "-2 * sin(30)/cos(30) -(-1) + sqrt(16/4)/tan( 1/2)";
   int error = 0;
   char *output = polish(input, &error);
   if (output) free(output);

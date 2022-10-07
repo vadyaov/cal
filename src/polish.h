@@ -19,3 +19,4 @@ char *space_btw(char *src, int *error);
 int fspaces(const char *src);
 int fsymbol(const char *src);
 int give_priority(char c);
+void find_unary(char *src);

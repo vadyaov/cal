@@ -1,7 +1,7 @@
 #include "polish.h"
 
 int main() {
-  const char input[] = "5 / sin(1/2) * cos(1/3) + tan(30) + 1mod2";
+  const char input[] = "-2 * sin(30)/cos(30) -(-1) + sqrt(16/4)/tan( 1/2)";
   const char *output = NULL;
   int err = 0;
   printf("input = %s\n", input);

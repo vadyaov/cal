@@ -6,14 +6,16 @@ char *polish(const char *input, int *err) {
   struct stack *root = NULL;
   if (input) {
     new_input = pretty_input(input, err);
+    //printf("new:%s\n%ld\n", new_input, strlen(new_input));
     input_start = new_input;
     if (new_input) {
       int future_spaces = fspaces(new_input),
           future_symbol = fsymbol(new_input);
+      //printf("fsp = %d\tfsymb = %d\n", future_spaces, future_symbol);
       output = calloc(future_spaces + future_symbol + 2, sizeof(char));
       out_start = output;
       if (output) {
-        int k = 0, max = future_spaces + future_symbol;
+        int k = 0, max = future_spaces + future_symbol + 2;
         char a;
         while ((a = *new_input) != '\0' && !*err) {
           if (is_number(a)) {
@@ -101,6 +103,8 @@ char *pretty_input(const char *input, int *error) {
         }
       }
       no_del_input[j] = '\0';
+      find_unary(no_del_input);
+      printf("no_del:%s\n", no_del_input);
       perfect = space_btw(no_del_input, error);
       free(no_del_input);
     } else {
@@ -146,12 +150,12 @@ int is_number(char c) { return (c >= '0' && c <= '9'); }
 int is_letter(char c) { return (c >= 'a' && c <= 'z'); }
 
 int is_operator(char c) { 
-  char op[] = "()+-/*^";
+  char op[] = "~()+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
 
 int is_operator_not_bracket(char c) { 
-  char op[] = "m+-/*^";
+  char op[] = "~m+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
 
@@ -237,7 +241,7 @@ int fspaces(const char *src) {
 
 int fsymbol(const char *src) {
   int symbols = 0;
-  const char s[] = "sctSCTqlg+-/*^0123456789";
+  const char s[] = "sctSCTqlg~+-/*^0123456789";
   for (int i = 0; src[i] != '\0'; i++) {
     if (strchr(s, src[i]) != NULL) symbols++;
   }
@@ -250,5 +254,22 @@ int give_priority(char c) {
     p = 1;
   else if (c == '^')
     p = 2;
+  else if (c == '~')
+    p = 3;
   return p;
+}
+
+void find_unary(char *src) {
+  char *buf = src;
+  int i = 0, j = 0;
+  while (buf[i] != '\0') {
+    if (buf[i] == '-') {
+      if (i == 0) buf[i] = '~';
+      else if (buf[i - 1] == '(' ||
+               is_operator_not_bracket(buf[i - 1]) ||
+               (i > 2 && hash(buf + i - 3, &j, &j) == 'm'))
+        buf[i] = '~';
+    }
+    i++;
+  }
 }
