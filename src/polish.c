@@ -150,12 +150,12 @@ int is_number(char c) { return (c >= '0' && c <= '9'); }
 int is_letter(char c) { return (c >= 'a' && c <= 'z'); }
 
 int is_operator(char c) { 
-  char op[] = "~()+-/*^";
+  char op[] = "|~()+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
 
 int is_operator_not_bracket(char c) { 
-  char op[] = "~m+-/*^";
+  char op[] = "|~m+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
 
@@ -241,7 +241,7 @@ int fspaces(const char *src) {
 
 int fsymbol(const char *src) {
   int symbols = 0;
-  const char s[] = "sctSCTqlg~+-/*^0123456789";
+  const char s[] = "sctSCTqlg|~+-/*^0123456789";
   for (int i = 0; src[i] != '\0'; i++) {
     if (strchr(s, src[i]) != NULL) symbols++;
   }
@@ -254,7 +254,7 @@ int give_priority(char c) {
     p = 1;
   else if (c == '^')
     p = 2;
-  else if (c == '~')
+  else if (c == '~' || c == '|')
     p = 3;
   return p;
 }
@@ -263,12 +263,16 @@ void find_unary(char *src) {
   char *buf = src;
   int i = 0, j = 0;
   while (buf[i] != '\0') {
-    if (buf[i] == '-') {
-      if (i == 0) buf[i] = '~';
-      else if (buf[i - 1] == '(' ||
+    if (buf[i] == '-' || buf[i] == '+') {
+      if (i == 0) {
+        if (buf[i] == '-') buf[i] = '~';
+        else buf[i] = '|';
+      } else if (buf[i - 1] == '(' ||
                is_operator_not_bracket(buf[i - 1]) ||
-               (i > 2 && hash(buf + i - 3, &j, &j) == 'm'))
-        buf[i] = '~';
+               (i > 2 && hash(buf + i - 3, &j, &j) == 'm')) {
+        if (buf[i] == '-') buf[i] = '~';
+        else buf[i] = '|';
+      }
     }
     i++;
   }
