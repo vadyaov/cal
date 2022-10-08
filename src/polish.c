@@ -1,9 +1,10 @@
 #include "polish.h"
+#include "stack_symb.h"
 
 char *polish(const char *input, int *err) {
   char *new_input = NULL, *input_start = NULL;
   char *output = NULL, *out_start = NULL;
-  struct stack *root = NULL;
+  struct stack_s *root = NULL;
   if (input) {
     new_input = pretty_input(input, err);
     //printf("new:%s\n%ld\n", new_input, strlen(new_input));
@@ -25,39 +26,39 @@ char *polish(const char *input, int *err) {
             new_input += i - 1;
             if (k < max) *output++ = ' ';
           } else if (is_function(a) || a == '(') {
-            push(&root, a);
+            push_s(&root, a);
           } else if (a == ')') {
-            while (!*err && peek(root) != '(') {
+            while (!*err && peek_s(root) != '(') {
               if (!root)
                 *err = 1;
               else {
-                *output++ = pop(&root);
+                *output++ = pop_s(&root);
                 k++;
                 if (k < max) *output++ = ' ';
               }
             }
-            if (!*err) pop(&root);
+            if (!*err) pop_s(&root);
           } else if (is_operator_not_bracket(a)) {
             if (root) {
-              char b = peek(root);
+              char b = peek_s(root);
               int pr = give_priority(a);
               while (b && (is_function(b) || (is_operator_not_bracket(b) &&
                                               give_priority(b) >= pr))) {
-                *output++ = pop(&root);
+                *output++ = pop_s(&root);
                 k++;
                 if (k < max) *output++ = ' ';
-                b = peek(root);
+                b = peek_s(root);
               }
             }
-            push(&root, a);
+            push_s(&root, a);
           }
           new_input++;
         }
         free(input_start);
         while (root && !*err) {
-          char b = peek(root);
+          char b = peek_s(root);
           if (is_operator_not_bracket(b) || is_function(b)) {
-            *output++ = pop(&root);
+            *output++ = pop_s(&root);
             k++;
             if (k < max) *output++ = ' ';
           } else {
@@ -74,7 +75,7 @@ char *polish(const char *input, int *err) {
     }
   }
   if (*err) {
-    destroy(&root);
+    destroy_s(&root);
     *err = 1;
   }
   return out_start;

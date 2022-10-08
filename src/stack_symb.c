@@ -1,9 +1,9 @@
 #include "stack_symb.h"
 
-void push(struct stack **root, char s) {
-  struct stack *new = (struct stack *)malloc(sizeof(struct stack));
+void push_s(struct stack_s **root, char s) {
+  struct stack_s *new = (struct stack_s *)malloc(sizeof(struct stack_s));
   if (new) {
-    struct stack *tmp = *root;
+    struct stack_s *tmp = *root;
     new->c = s;
     new->next = tmp;
     *root = new;
@@ -12,24 +12,24 @@ void push(struct stack **root, char s) {
   }
 }
 
-char pop(struct stack **root) {
-  struct stack *tmp = (*root)->next;
-  struct stack *head = *root;
+char pop_s(struct stack_s **root) {
+  struct stack_s *tmp = (*root)->next;
+  struct stack_s *head = *root;
   char s = (*root)->c;
   free(head);
   (*root) = tmp;
   return s;
 }
 
-char peek(struct stack* root) {
+char peek_s(struct stack_s* root) {
   char c = 0;
   if (root) c = root->c;
   return c;
 }
 
-void destroy(struct stack **root) {
-  struct stack *tmp = *root;
-  struct stack *next;
+void destroy_s(struct stack_s **root) {
+  struct stack_s *tmp = *root;
+  struct stack_s *next;
   while (tmp) {
     next = tmp->next;
     free(tmp);
@@ -38,9 +38,9 @@ void destroy(struct stack **root) {
   (*root) = NULL;
 }
 
-void print_stack(struct stack *root) {
-  struct stack *tmp = root;
-  if (!tmp) printf("empty stack!\n");
+void print_stack_s(struct stack_s *root) {
+  struct stack_s *tmp = root;
+  if (!tmp) printf("empty stack_s!\n");
   printf("STACK:\n");
   while (tmp) {
     printf("c = %c\n", tmp->c);

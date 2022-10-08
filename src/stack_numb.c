@@ -1,9 +1,9 @@
 #include "stack_numb.h"
 
-void push(struct stack **root, double num) {
-  struct stack *new = (struct stack *)malloc(sizeof(struct stack));
+void push_n(struct stack_n **root, double num) {
+  struct stack_n *new = (struct stack_n *)malloc(sizeof(struct stack_n));
   if (new) {
-    struct stack *tmp = *root;
+    struct stack_n *tmp = *root;
     new->number = num;
     new->next = tmp;
     *root = new;
@@ -12,24 +12,24 @@ void push(struct stack **root, double num) {
   }
 }
 
-double pop(struct stack **root) {
-  struct stack *tmp = (*root)->next;
-  struct stack *head = *root;
+double pop_n(struct stack_n **root) {
+  struct stack_n *tmp = (*root)->next;
+  struct stack_n *head = *root;
   double num = (*root)->number;
   free(head);
   (*root) = tmp;
   return num;
 }
 
-double peek(struct stack* root) {
+double peek_n(struct stack_n* root) {
   double num = 0;
   if (root) num = root->number;
   return num;
 }
 
-void destroy(struct stack **root) {
-  struct stack *tmp = *root;
-  struct stack *next;
+void destroy_n(struct stack_n **root) {
+  struct stack_n *tmp = *root;
+  struct stack_n *next;
   while (tmp) {
     next = tmp->next;
     free(tmp);
@@ -38,9 +38,9 @@ void destroy(struct stack **root) {
   (*root) = NULL;
 }
 
-void print_stack(struct stack *root) {
-  struct stack *tmp = root;
-  if (!tmp) printf("empty stack!\n");
+void print_stack_n(struct stack_n *root) {
+  struct stack_n *tmp = root;
+  if (!tmp) printf("empty stack_n!\n");
   printf("STACK:\n");
   while (tmp) {
     printf("c = %lf\n", tmp->number);

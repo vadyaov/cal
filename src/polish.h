@@ -1,6 +1,5 @@
 #include <string.h>
-
-#include "stack_symb.h"
+#include "libs.h"
 
 char *polish(const char *input, int *err);
 

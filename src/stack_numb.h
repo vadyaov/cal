@@ -3,15 +3,15 @@
 
 #include "libs.h"
 
-struct stack {
+struct stack_n {
   double number;
-  struct stack* next;
+  struct stack_n* next;
 };
 
-void push(struct stack** root, double num);
-double pop(struct stack** root);
-double peek(struct stack* root);
-void destroy(struct stack** root);
-void print_stack(struct stack* root);
+void push_n(struct stack_n** root, double num);
+double pop_n(struct stack_n** root);
+double peek_n(struct stack_n* root);
+void destroy_n(struct stack_n** root); 
+void print_stack_n(struct stack_n* root);
 
 #endif  // _SRC_STACK_H
