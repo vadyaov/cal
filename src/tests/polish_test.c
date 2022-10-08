@@ -1,7 +1,7 @@
 #include "test.h"
 
 START_TEST(polish_t1) {
-  char input[] = "-2 * sin(30)/cos(30) -(-1) + sqrt(16/4)/tan( 1/2)";
+  const char input[] = "-2 * sin(30)/cos(30) -(-1) + sqrt(16/4)/tan( 1/2)";
   int error = 0;
   char *output = polish(input, &error);
   if (output) free(output);
@@ -10,10 +10,10 @@ START_TEST(polish_t1) {
   ck_assert_str_eq(output, expected);
 }
 END_TEST
-  char input[] = "";
+  const char input[] = "";
   int error = 0;
   char *output = polish(input, &error);
-  if (output) free(output);
+  if (output != NULL) free(output);
   char expected[] = "";
   ck_assert_int_eq(error, 0);
   ck_assert_str_eq(output, expected);

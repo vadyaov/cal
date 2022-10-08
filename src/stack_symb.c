@@ -1,4 +1,4 @@
-#include "stack.h"
+#include "stack_symb.h"
 
 void push(struct stack **root, char s) {
   struct stack *new = (struct stack *)malloc(sizeof(struct stack));

@@ -1,7 +1,7 @@
 #include "polish.h"
 
 int main() {
-  const char input[] = "+2";
+  const char input[] = "-2 * 30/40 -(-1) + (16/4)/( 1/2)";
   const char *output = NULL;
   int err = 0;
   printf("input = %s\n", input);
