@@ -15,6 +15,7 @@ char *polish(const char *input, int *err) {
       //printf("fsp = %d\tfsymb = %d\n", future_spaces, future_symbol);
       output = calloc(future_spaces + future_symbol + 2, sizeof(char));
       out_start = output;
+      //printf("NEW:%s\n", new_input);
       if (output) {
         int k = 0, max = future_spaces + future_symbol + 2;
         char a;
@@ -37,13 +38,16 @@ char *polish(const char *input, int *err) {
                 if (k < max) *output++ = ' ';
               }
             }
+            //printf("to_pop:%c\n", root->c);
             if (!*err) pop_s(&root);
           } else if (is_operator_not_bracket(a)) {
+            //printf("operator = %c\n", a);
             if (root) {
               char b = peek_s(root);
               int pr = give_priority(a);
               while (b && (is_function(b) || (is_operator_not_bracket(b) &&
                                               give_priority(b) >= pr))) {
+                //printf("TOPOP:%c\n", root->c);
                 *output++ = pop_s(&root);
                 k++;
                 if (k < max) *output++ = ' ';
@@ -51,11 +55,14 @@ char *polish(const char *input, int *err) {
               }
             }
             push_s(&root, a);
+          //printf("AAA\n");
+          //print_stack_s(root);
           }
           new_input++;
         }
         free(input_start);
         while (root && !*err) {
+          //print_stack_s(root);
           char b = peek_s(root);
           if (is_operator_not_bracket(b) || is_function(b)) {
             *output++ = pop_s(&root);

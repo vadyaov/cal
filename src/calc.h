@@ -5,3 +5,4 @@
 double calc(char *polishString);
 double convert_to_double(char *src, int *i);
 int makeOperator(struct stack_n **root, char s);
+int makeFunction(struct stack_n **root, char s);

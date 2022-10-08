@@ -2,7 +2,7 @@
 #include "calc.h"
 
 int main() {
-  const char input[] = "-223.123 + (16.1/4.0)/( 1.0023/2.05)";
+  const char input[] = "(1/2)*sin(30)";
   char *output = NULL;
   int err = 0;
   printf("input = %s\n", input);
@@ -10,5 +10,6 @@ int main() {
   if (!err) printf("output = %s\n", output);
   calc(output);
   if (output) free((char *)output);
+  printf("[%lf]", 0.5 * sin(30));
   return 0;
 }

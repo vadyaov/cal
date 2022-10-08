@@ -6,7 +6,9 @@ double calc(char *polishString) {
   double res = 0.0;
   int i = 0, error = 0;
   char s = 0;
+  printf("buf =%s\n", buf);
   while ((s = buf[i]) != '\0' && !error) {
+    //printf("S=%d\n", s);
     if (is_number(s)) {
       push_n(&root, convert_to_double(buf + i, &i)); 
     } else if (is_operator_not_bracket(s)) {
@@ -14,7 +16,7 @@ double calc(char *polishString) {
       print_stack_n(root);
       i++;
     } else if (is_function(s)) {
-      
+      error = makeFunction(&root, s);      
       i++;
     } else if (s == ' ') {
       i++;
@@ -73,7 +75,9 @@ int makeOperator(struct stack_n **root, char s) {
     }
     if (0 == error) {
       if (s == 'm') {
+        printf("1.%lf\n2.%lf\n", firstNum, secondNum);
         res = fmod(firstNum, secondNum); 
+        printf("res = %lf\n", res);
       } else if (s == '+') {
         res = firstNum + secondNum;
       } else if (s == '-') {
@@ -90,3 +94,38 @@ int makeOperator(struct stack_n **root, char s) {
   }
   return error;
 }
+
+int makeFunction(struct stack_n **root, char s) {
+  double number = 0.0;
+  int error = 0;
+  if (NULL != *root) {
+    number = pop_n(root);
+  } else {
+    error = 1;
+  }
+  if (0 == error) {
+    double result = 0.0;
+    if (s == 's') {
+      result = sin(number); 
+    } else if (s == 'c') {
+      result = cos(number);
+    } else if (s == 't') {
+      result = tan(number);
+    } else if (s == 'S') {
+      result = asin(number);
+    } else if (s == 'C') {
+      result = acos(number);
+    } else if (s == 'T') {
+      result = atan(number);
+    } else if (s == 'q') {
+      result = sqrt(number);
+    } else if (s == 'l') {
+      result = log(number);
+    } else if (s == 'g') {
+      result = log10(number);
+    }
+    push_n(root, result);
+  }
+  return error;
+}
+
