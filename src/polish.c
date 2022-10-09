@@ -44,9 +44,11 @@ char *polish(const char *input, int *err) {
             //printf("operator = %c\n", a);
             if (root) {
               char b = peek_s(root);
+              printf("a = %c\nb=%c\n", a, b);
               int pr = give_priority(a);
-              while (b && (is_function(b) || (is_operator_not_bracket(b) &&
-                                              give_priority(b) >= pr))) {
+              while (b && (is_function(b) || ((is_operator_not_bracket(b) &&
+                     give_priority(b) >= pr)))) {
+                if (pr == 2 && a == b) break;
                 //printf("TOPOP:%c\n", root->c);
                 *output++ = pop_s(&root);
                 k++;
