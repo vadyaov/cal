@@ -1,7 +1,7 @@
 #include <check.h>
 
 #include "../polish.h"
-#include "../stack.h"
+#include "../calc.h"
 
 Suite *polishSuite();
 

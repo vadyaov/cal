@@ -6,21 +6,22 @@ double calc(char *polishString) {
   double res = 0.0;
   int i = 0, error = 0;
   char s = 0;
-  printf("buf =%s\n", buf);
   while ((s = buf[i]) != '\0' && !error) {
-    //printf("S=%d\n", s);
     if (is_number(s)) {
       push_n(&root, convert_to_double(buf + i, &i)); 
-    } else if (is_operator_not_bracket(s)) {
-      error = makeOperator(&root, s); 
-      print_stack_n(root);
-      i++;
-    } else if (is_function(s)) {
-      error = makeFunction(&root, s);      
-      i++;
-    } else if (s == ' ') {
+    } else {
+      if (is_operator_not_bracket(s))
+        error = makeOperator(&root, s); 
+      else if (is_function(s))
+        error = makeFunction(&root, s);      
       i++;
     }
+  }
+  if (0 == error) {
+    res = pop_n(&root);
+    printf("res = %lf\n", res);
+  } else {
+    printf("Calculation error!\n");
   }
   return res;
 }
@@ -45,7 +46,7 @@ double convert_to_double(char *src, int *i) {
     fractionalPart /= pow(10.0, k);
   }
   doubleNum = integerPart + fractionalPart;
-  printf("doubleNumber = %lf\n", doubleNum);
+  //printf("doubleNumber = %lf\n", doubleNum);
   *i += end - src;
   return doubleNum;
 }
@@ -75,9 +76,9 @@ int makeOperator(struct stack_n **root, char s) {
     }
     if (0 == error) {
       if (s == 'm') {
-        printf("1.%lf\n2.%lf\n", firstNum, secondNum);
+        //printf("1.%lf\n2.%lf\n", firstNum, secondNum);
         res = fmod(firstNum, secondNum); 
-        printf("res = %lf\n", res);
+        //printf("res = %lf\n", res);
       } else if (s == '+') {
         res = firstNum + secondNum;
       } else if (s == '-') {
@@ -110,7 +111,9 @@ int makeFunction(struct stack_n **root, char s) {
     } else if (s == 'c') {
       result = cos(number);
     } else if (s == 't') {
+      printf("number = %lf\n", number);
       result = tan(number);
+      printf("result = %lf\n", result);
     } else if (s == 'S') {
       result = asin(number);
     } else if (s == 'C') {
