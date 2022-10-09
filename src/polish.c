@@ -139,8 +139,8 @@ int is_bad_symb(char c, const char *symbols) {
 char hash(const char *src, int *n, int *replace) {
   char symb[] = "msctSCTqlg", out = 0;
   *replace = 0;
-  char *functions[] = {"mod",  "sin",  "cos",  "tan", "acos",
-                       "asin", "atan", "sqrt", "ln",  "log"};
+  char *functions[] = {"mod",  "sin",  "cos",  "tan", "asin",
+                       "acos", "atan", "sqrt", "ln",  "log"};
   int i = 0, l = 0;
   for (; i < 10 && !out; i++) {
     l = strlen(functions[i]);
@@ -258,9 +258,9 @@ int fsymbol(const char *src) {
 
 int give_priority(char c) {
   int p = 0;
-  if (c == '*' || c == '/' || c == 'm')
+  if (c == '*' || c == '/')
     p = 1;
-  else if (c == '^')
+  else if (c == '^' || c == 'm')
     p = 2;
   else if (c == '~' || c == '|')
     p = 3;

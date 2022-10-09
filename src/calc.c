@@ -2,6 +2,7 @@
 
 double calc(char *polishString) {
   char *buf = polishString;
+  printf("polishString=%s\n", buf);
   struct stack_n *root = NULL;
   double res = 0.0;
   int i = 0, error = 0;
