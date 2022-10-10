@@ -33,7 +33,7 @@ $(SRC_OBJS): ./objects%.o: .%.c $(SRC_INC)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 test: $(calclib) $(TEST_OBJS) $(TEST_MAIN_OBJ) $(TEST_INC)
-	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) -o tests/test $(TST_LIBS) -L. $(calclib)
+	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) -o tests/test $(TST_LIBS) -L. $(calclib) #-fsanitize=address -g
 	./tests/test
 
 $(TEST_OBJS): ./tests/objects%.o: ./tests/%.c $(TEST_INC)

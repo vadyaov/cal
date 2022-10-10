@@ -13,19 +13,17 @@ char *polish(const char *input, int *err) {
       int future_spaces = fspaces(new_input),
           future_symbol = fsymbol(new_input);
       //printf("fsp = %d\tfsymb = %d\n", future_spaces, future_symbol);
-      output = calloc(future_spaces + future_symbol + 2, sizeof(char));
+      output = calloc(future_spaces + future_symbol + 1, sizeof(char));
       out_start = output;
       //printf("NEW:%s\n", new_input);
       if (output) {
-        int k = 0, max = future_spaces + future_symbol + 2;
         char a;
         while ((a = *new_input) != '\0' && !*err) {
           if (is_number(a)) {
             int i = 0;
             output = put_in_out(new_input, output, &i);
-            k += i;
             new_input += i - 1;
-            if (k < max) *output++ = ' ';
+            *output++ = ' ';
           } else if (is_function(a) || a == '(') {
             push_s(&root, a);
           } else if (a == ')') {
@@ -34,8 +32,7 @@ char *polish(const char *input, int *err) {
                 *err = 1;
               else {
                 *output++ = pop_s(&root);
-                k++;
-                if (k < max) *output++ = ' ';
+                *output++ = ' ';
               }
             }
             //printf("to_pop:%c\n", root->c);
@@ -44,38 +41,40 @@ char *polish(const char *input, int *err) {
             //printf("operator = %c\n", a);
             if (root) {
               char b = peek_s(root);
-              printf("a = %c\nb=%c\n", a, b);
+              //printf("a = %c\nb=%c\n", a, b);
               int pr = give_priority(a);
               while (b && (is_function(b) || ((is_operator_not_bracket(b) &&
                      give_priority(b) >= pr)))) {
                 if (pr == 2 && a == b) break;
                 //printf("TOPOP:%c\n", root->c);
                 *output++ = pop_s(&root);
-                k++;
-                if (k < max) *output++ = ' ';
+                *output++ = ' ';
                 b = peek_s(root);
               }
             }
             push_s(&root, a);
-          //printf("AAA\n");
           //print_stack_s(root);
           }
           new_input++;
         }
         free(input_start);
         while (root && !*err) {
+          //printf("1.\n");
           //print_stack_s(root);
           char b = peek_s(root);
           if (is_operator_not_bracket(b) || is_function(b)) {
+           // printf("Start:%s\n", out_start);
             *output++ = pop_s(&root);
-            k++;
-            if (k < max) *output++ = ' ';
+            if (root) *output++ = ' ';
           } else {
             printf("Error!\n");
             *err = 1;
           }
+          //printf("2.\n");
+          //print_stack_s(root);
         }
-        *(--output) = '\0';
+        *(output) = '\0';
+            //printf("!Start:%s\n", out_start);
       } else {
         printf("Memory disaster.\n");
       }
@@ -114,7 +113,7 @@ char *pretty_input(const char *input, int *error) {
       }
       no_del_input[j] = '\0';
       find_unary(no_del_input);
-      printf("no_del:%s\n", no_del_input);
+      //printf("no_del:%s\n", no_del_input);
       perfect = space_btw(no_del_input, error);
       free(no_del_input);
     } else {
@@ -251,7 +250,7 @@ int fspaces(const char *src) {
 
 int fsymbol(const char *src) {
   int symbols = 0;
-  const char s[] = "sctSCTqlg|~+-/*^0123456789";
+  const char s[] = "msctSCTqlg|~+-/*^0123456789.";
   for (int i = 0; src[i] != '\0'; i++) {
     if (strchr(s, src[i]) != NULL) symbols++;
   }

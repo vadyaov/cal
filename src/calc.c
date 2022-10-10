@@ -2,7 +2,7 @@
 
 double calc(char *polishString) {
   char *buf = polishString;
-  printf("polishString=%s\n", buf);
+  //printf("polishString=%s\n", buf);
   struct stack_n *root = NULL;
   double res = 0.0;
   int i = 0, error = 0;
@@ -20,7 +20,7 @@ double calc(char *polishString) {
   }
   if (0 == error) {
     res = pop_n(&root);
-    printf("res = %lf\n", res);
+    //printf("res = %lf\n", res);
   } else {
     printf("Calculation error!\n");
   }
@@ -77,9 +77,7 @@ int makeOperator(struct stack_n **root, char s) {
     }
     if (0 == error) {
       if (s == 'm') {
-        //printf("1.%lf\n2.%lf\n", firstNum, secondNum);
         res = fmod(firstNum, secondNum); 
-        //printf("res = %lf\n", res);
       } else if (s == '+') {
         res = firstNum + secondNum;
       } else if (s == '-') {
@@ -112,9 +110,7 @@ int makeFunction(struct stack_n **root, char s) {
     } else if (s == 'c') {
       result = cos(number);
     } else if (s == 't') {
-      printf("number = %lf\n", number);
       result = tan(number);
-      printf("result = %lf\n", result);
     } else if (s == 'S') {
       result = asin(number);
     } else if (s == 'C') {
