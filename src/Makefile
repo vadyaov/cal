@@ -1,5 +1,6 @@
 CC := gcc
 calclib := calc.a
+calclib_gcov := gcov$(calclib)
 
 ASAN := #-fsanitize=address -g
 CFLAGS := -Wall -Werror -Wextra -std=c11 -pedantic -fanalyzer $(ASAN)
@@ -22,15 +23,32 @@ TEST_MAIN := ./tests/test.c
 TEST_MAIN_OBJ := ./tests/objects/test.o
 TEST_ALL_OBJS := $(TEST_OBJS) $(TEST_MAIN_OBJS)
 
+# put this objs in other dir because they include coverage flags
+GCOV_OBJS := $(addprefix ./tests/objects/, $(notdir $(SRC_FILES:.c=.o)))
+
+GCOV_MAIN_FILE := ./coverage
+GCOV_INFO_FILE := coverage.info
+
+GCDA := $(shell find ./tests/objects -maxdepth 1 -name "*.gcda")
+GCNO := $(shell find ./tests/objects -maxdepth 1 -name "*.gcno")
+
 all: $(calclib) test #gcov_report
 
 $(calclib): $(SRC_OBJS) $(SRC_INC)
 	ar rc $@ $(SRC_OBJS)
 	ranlib $@
+	
+$(calclib_gcov): $(GCOV_OBJS) $(SRC_INC)
+	ar rc $@ $(GCOV_OBJS)
+	ranlib $@
 
 $(SRC_OBJS): ./objects%.o: .%.c $(SRC_INC)
 	@mkdir -p objects
 	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(GCOV_OBJS): ./tests/objects%.o: .%.c $(SRC_INC)
+	@mkdir -p tests/objects
+	$(CC) $(CFLAGS) $(GCOV_FLAGS) -o $@ -c $<
 
 test: $(calclib) $(TEST_OBJS) $(TEST_MAIN_OBJ) $(TEST_INC)
 	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) -o tests/test $(TST_LIBS) -L. $(calclib) #-fsanitize=address -g
@@ -44,6 +62,26 @@ $(TEST_MAIN_OBJ): $(TEST_MAIN)
 	@mkdir -p ./tests/objects
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+gcov_report: $(GCOV_MAIN_FILE)
+	open coverage/index.html
+
+$(GCOV_MAIN_FILE): $(GCOV_INFO_FILE)
+	genhtml $< -o $@
+
+$(GCOV_INFO_FILE): gcov_test
+	./tests/test_gcov
+	geninfo ./tests/objects -b . -o ./$@
+
+gcov_test: $(calclib_gcov) $(TEST_MAIN_OBJ) $(TEST_OBJS)
+	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) $(GCOV_FLAGS) -o tests/test_gcov $(TST_LIBS) -L. $<
+
 clean:
-	rm -f $(SRC_OBJS) $(TEST_ALL_OBJS) $(calclib) ./tests/test
-	rm -rf ./objects/ ./tests/objects
+	rm -f $(SRC_OBJS) 
+	rm -f $(TEST_ALL_OBJS) 
+	rm -f $(calclib) $(calclib_gcov) 
+	rm -f coverage.info
+	rm -f $(GCDA) $(GCNO)
+	rm -f ./tests/test
+	rm -f ./tests/test_gcov
+	rm -rf ./objects/ ./tests/objects/ ./coverage/
+

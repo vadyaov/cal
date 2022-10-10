@@ -2,8 +2,8 @@
 #include "stack_symb.h"
 
 char *polish(const char *input, int *err) {
-  char *new_input = NULL, *input_start = NULL;
-  char *output = NULL, *out_start = NULL;
+  char *new_input = NULL, *input_start = NULL,
+       *output = NULL, *output_start = NULL;
   struct stack_s *root = NULL;
   if (input) {
     new_input = pretty_input(input, err);
@@ -14,7 +14,7 @@ char *polish(const char *input, int *err) {
           future_symbol = fsymbol(new_input);
       //printf("fsp = %d\tfsymb = %d\n", future_spaces, future_symbol);
       output = calloc(future_spaces + future_symbol + 1, sizeof(char));
-      out_start = output;
+      output_start = output;
       //printf("NEW:%s\n", new_input);
       if (output) {
         char a;
@@ -63,7 +63,7 @@ char *polish(const char *input, int *err) {
           //print_stack_s(root);
           char b = peek_s(root);
           if (is_operator_not_bracket(b) || is_function(b)) {
-           // printf("Start:%s\n", out_start);
+           // printf("Start:%s\n", output_start);
             *output++ = pop_s(&root);
             if (root) *output++ = ' ';
           } else {
@@ -74,7 +74,7 @@ char *polish(const char *input, int *err) {
           //print_stack_s(root);
         }
         *(output) = '\0';
-            //printf("!Start:%s\n", out_start);
+            //printf("!Start:%s\n", output_start);
       } else {
         printf("Memory disaster.\n");
       }
@@ -86,7 +86,7 @@ char *polish(const char *input, int *err) {
     destroy_s(&root);
     *err = 1;
   }
-  return out_start;
+  return output_start;
 }
 
 char *pretty_input(const char *input, int *error) {
