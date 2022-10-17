@@ -5,6 +5,9 @@
 
 class QPushButton;
 class QLineEdit;
+class QRadioButton;
+class QLabel;
+class QFont;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -15,35 +18,20 @@ class Smartcalc : public QWidget {
 
   private:
     QPushButton *button0_, *button1_, *button2_, *button3_, *button4_,
-                *button5_, *button6_, *button7_, *button8_, *button9_;
+                *button5_, *button6_, *button7_, *button8_, *button9_,
+                *buttonBspc_, *buttonAc_,
+                *buttonPoint_, *buttonLbracket_, *buttonRbracket_,
+                *buttonDiv_, *buttonMult_, *buttonMinus_, *buttonPlus_,
+                *buttonMod_, *buttonPow_, *buttonEqual_, *buttonSin_,
+                *buttonCos_, *buttonTan_, *buttonAsin_, *buttonAcos_,
+                *buttonAtan_, *buttonLn_, *buttonLog_, *buttonSqrt_;
 
-    QPushButton *buttonBspc_;
-    QPushButton *buttonAc_;
+    QLineEdit *lineEditMain_, *lineEditX_;
+    QRadioButton *graphButton_;
+    QLabel *xValue_;
 
-    QPushButton *buttonPoint_;
-    QPushButton *buttonLbracket_;
-    QPushButton *buttonRbracket_;
-
-    QPushButton *buttonDiv_;
-    QPushButton *buttonMult_;
-    QPushButton *buttonMinus_;
-    QPushButton *buttonPlus_;
-    QPushButton *buttonMod_;
-    QPushButton *buttonPow_;
-    QPushButton *buttonEqual_;
-
-    QPushButton *buttonSin_;
-    QPushButton *buttonCos_;
-    QPushButton *buttonTan_;
-    QPushButton *buttonAsin_;
-    QPushButton *buttonAcos_;
-    QPushButton *buttonAtan_;
-    QPushButton *buttonLn_;
-    QPushButton *buttonLog_;
-    QPushButton *buttonSqrt_;
-
-    
-    QLineEdit *lineEdit_;
+  private slots:
+    void onButtonClicked();
 };
 
 #endif // SMARTCALC_H

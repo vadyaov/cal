@@ -23,7 +23,11 @@ Smartcalc::Smartcalc(QWidget *parent) :
   buttonLbracket_ = new QPushButton(tr("("));
   buttonRbracket_ = new QPushButton(tr(")"));
 
-  lineEdit_ = new QLineEdit();
+  lineEditMain_ = new QLineEdit();
+  lineEditX_ = new QLineEdit();
+  xValue_ = new QLabel(tr("x:"));
+
+  graphButton_ = new QRadioButton("Graph", this);
 
   buttonDiv_ = new QPushButton(tr("/"));
   buttonMult_ = new QPushButton(tr("*"));
@@ -79,11 +83,49 @@ Smartcalc::Smartcalc(QWidget *parent) :
   mainLayout->addWidget(buttonLn_, 2, 2);
   mainLayout->addWidget(buttonLog_, 3, 2);
   mainLayout->addWidget(buttonSqrt_, 4, 2);
-  mainLayout->addWidget(lineEdit_, 0, 0, 1, 6);
+  mainLayout->addWidget(lineEditMain_, 0, 0, 1, 6);
+  mainLayout->addWidget(lineEditX_, 5, 2);
+  lineEditX_->setMaximumWidth(80);
+  mainLayout->addWidget(graphButton_, 5, 0);
+  mainLayout->addWidget(xValue_, 5, 1);
+  xValue_->setAlignment(Qt::AlignRight);
+  QFont f("Arial", 14, QFont::Bold);
+    xValue_->setFont(f);
 
   setLayout(mainLayout);
   setWindowTitle(tr("Smartcalc_v1.0"));
 
+  connect(button0_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button1_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button2_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button3_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button4_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button5_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button6_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button7_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button8_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(button9_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonBspc_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonAc_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonPoint_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonLbracket_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonRbracket_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonDiv_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonMult_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonMinus_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonPlus_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonMod_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonPow_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonEqual_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonSin_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonCos_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonTan_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonAsin_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonAcos_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonAtan_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonLn_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonLog_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonSqrt_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
 }
 
 // Destructor
@@ -98,5 +140,95 @@ Smartcalc::~Smartcalc() {
   delete button7_;
   delete button8_;
   delete button9_;
-  delete lineEdit_;
+  delete buttonBspc_;
+  delete buttonAc_;
+  delete buttonPoint_;
+  delete buttonLbracket_;
+  delete buttonRbracket_;
+  delete buttonDiv_;
+  delete buttonMult_;
+  delete buttonMinus_;
+  delete buttonPlus_;
+  delete buttonMod_;
+  delete buttonPow_;
+  delete buttonEqual_;
+  delete buttonSin_;
+  delete buttonCos_;
+  delete buttonTan_;
+  delete buttonAsin_;
+  delete buttonAcos_;
+  delete buttonAtan_;
+  delete buttonLn_;
+  delete buttonLog_;
+  delete buttonSqrt_;
+  delete lineEditMain_;
+  delete lineEditX_;
+  delete graphButton_;
+  delete xValue_;
+}
+
+void Smartcalc::onButtonClicked() {
+  QObject *callingButton = QObject::sender();
+  if (callingButton == button0_)
+    lineEditMain_->setText(lineEditMain_->text() + "0");
+  else if (callingButton == button1_)
+    lineEditMain_->setText(lineEditMain_->text() + "1");
+  else if (callingButton == button2_)
+    lineEditMain_->setText(lineEditMain_->text() + "2");
+  else if (callingButton == button3_)
+    lineEditMain_->setText(lineEditMain_->text() + "3");
+  else if (callingButton == button4_)
+    lineEditMain_->setText(lineEditMain_->text() + "4");
+  else if (callingButton == button5_)
+    lineEditMain_->setText(lineEditMain_->text() + "5");
+  else if (callingButton == button6_)
+    lineEditMain_->setText(lineEditMain_->text() + "6");
+  else if (callingButton == button7_)
+    lineEditMain_->setText(lineEditMain_->text() + "7");
+  else if (callingButton == button8_)
+    lineEditMain_->setText(lineEditMain_->text() + "8");
+  else if (callingButton == button9_)
+    lineEditMain_->setText(lineEditMain_->text() + "9");
+  //else if (callingButton == buttonBspc_)
+
+  //else if (callingButton == buttonAc_)
+
+  else if (callingButton == buttonPoint_)
+    lineEditMain_->setText(lineEditMain_->text() + ".");
+  else if (callingButton == buttonLbracket_)
+    lineEditMain_->setText(lineEditMain_->text() + "(");
+  else if (callingButton == buttonRbracket_)
+    lineEditMain_->setText(lineEditMain_->text() + ")");
+  else if (callingButton == buttonDiv_)
+    lineEditMain_->setText(lineEditMain_->text() + "/");
+  else if (callingButton == buttonMult_)
+    lineEditMain_->setText(lineEditMain_->text() + "*");
+  else if (callingButton == buttonMinus_)
+    lineEditMain_->setText(lineEditMain_->text() + "-");
+  else if (callingButton == buttonPlus_)
+    lineEditMain_->setText(lineEditMain_->text() + "+");
+  else if (callingButton == buttonMod_)
+    lineEditMain_->setText(lineEditMain_->text() + "mod");
+  else if (callingButton == buttonPow_)
+    lineEditMain_->setText(lineEditMain_->text() + "^");
+  //else if (callingButton == buttonEqual_)
+
+  else if (callingButton == buttonSin_)
+    lineEditMain_->setText(lineEditMain_->text() + "sin(");
+  else if (callingButton == buttonCos_)
+    lineEditMain_->setText(lineEditMain_->text() + "cos(");
+  else if (callingButton == buttonTan_)
+    lineEditMain_->setText(lineEditMain_->text() + "tan(");
+  else if (callingButton == buttonAsin_)
+    lineEditMain_->setText(lineEditMain_->text() + "asin(");
+  else if (callingButton == buttonAcos_)
+    lineEditMain_->setText(lineEditMain_->text() + "acos(");
+  else if (callingButton == buttonAtan_)
+    lineEditMain_->setText(lineEditMain_->text() + "atan(");
+  else if (callingButton == buttonLn_)
+    lineEditMain_->setText(lineEditMain_->text() + "ln(");
+  else if (callingButton == buttonLog_)
+    lineEditMain_->setText(lineEditMain_->text() + "log(");
+  else if (callingButton == buttonSqrt_)
+    lineEditMain_->setText(lineEditMain_->text() + "sqrt(");
 }
