@@ -3,11 +3,16 @@
 
 #include <QWidget>
 
+extern "C" {
+  #include "../calclogic/calc.h"
+}
+
 class QPushButton;
 class QLineEdit;
 class QRadioButton;
 class QLabel;
 class QFont;
+class QString;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -29,6 +34,8 @@ class Smartcalc : public QWidget {
     QLineEdit *lineEditMain_, *lineEditX_;
     QRadioButton *graphButton_;
     QLabel *xValue_;
+
+    int graph;
 
   private slots:
     void onButtonClicked();

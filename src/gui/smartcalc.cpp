@@ -5,6 +5,8 @@
 Smartcalc::Smartcalc(QWidget *parent) :
     QWidget(parent) {
   
+  graph = 0;
+
   button0_ = new QPushButton(tr("0"));
   button1_ = new QPushButton(tr("1"));
   button2_ = new QPushButton(tr("2"));
@@ -93,6 +95,8 @@ Smartcalc::Smartcalc(QWidget *parent) :
     xValue_->setFont(f);
 
   setLayout(mainLayout);
+  lineEditX_->setText("0.0");  
+  lineEditX_->setAlignment(Qt::AlignRight);
   setWindowTitle(tr("Smartcalc_v1.0"));
 
   connect(button0_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
@@ -189,10 +193,10 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "8");
   else if (callingButton == button9_)
     lineEditMain_->setText(lineEditMain_->text() + "9");
-  //else if (callingButton == buttonBspc_)
-
-  //else if (callingButton == buttonAc_)
-
+  else if (callingButton == buttonBspc_)
+    lineEditMain_->backspace();
+  else if (callingButton == buttonAc_)
+    lineEditMain_->clear();
   else if (callingButton == buttonPoint_)
     lineEditMain_->setText(lineEditMain_->text() + ".");
   else if (callingButton == buttonLbracket_)
@@ -211,8 +215,9 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "mod");
   else if (callingButton == buttonPow_)
     lineEditMain_->setText(lineEditMain_->text() + "^");
-  //else if (callingButton == buttonEqual_)
+  else if (callingButton == buttonEqual_) {
 
+  }
   else if (callingButton == buttonSin_)
     lineEditMain_->setText(lineEditMain_->text() + "sin(");
   else if (callingButton == buttonCos_)

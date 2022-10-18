@@ -4,6 +4,7 @@
 
 typedef struct xinfo {
   double x;
+  int err;
 } info;
 
 double calc(char *polishString, info *info);

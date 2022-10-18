@@ -26,7 +26,7 @@ double calc(char *polishString, info *info) {
     res = pop_n(&root);
     //printf("res = %lf\n", res);
   } else {
-    printf("Calculation error!\n");
+    info->err = 1;
   }
   return res;
 }
