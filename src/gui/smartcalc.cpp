@@ -134,6 +134,7 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   setLayout(layout);
   lineEditX_->setText("0.0");  
   lineEditX_->setAlignment(Qt::AlignRight);
+  lineEditMain_->setAlignment(Qt::AlignRight);
 }
 
 void Smartcalc::connectWidgets() {
@@ -215,7 +216,21 @@ void Smartcalc::onButtonClicked() {
   else if (callingButton == buttonPow_)
     lineEditMain_->setText(lineEditMain_->text() + "^");
   else if (callingButton == buttonEqual_) {
-
+    initInfo(&xinfo);
+    QString mainLine = lineEditMain_->text();
+    if (mainLine.isEmpty()) {
+      lineEditMain_->setText("empy line. press AC");
+    } else {
+      QString xLine = lineEditX_->text();
+      char mainInput[512] = {'\0'};
+      strncpy(mainInput, qPrintable(mainLine), 255);
+      if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
+      result = calc(mainInput, &xinfo);
+      lineEditMain_->clear();
+      if (!xinfo.err) lineEditMain_->setText(QString::number(result, 'f', 7));
+      else
+        lineEditMain_->setText("error");
+    }
   }
   else if (callingButton == buttonSin_)
     lineEditMain_->setText(lineEditMain_->text() + "sin(");
@@ -235,4 +250,9 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "log(");
   else if (callingButton == buttonSqrt_)
     lineEditMain_->setText(lineEditMain_->text() + "sqrt(");
+}
+
+void Smartcalc::initInfo(info *data) {
+  data->x = 0.0;
+  data->err = 0;
 }

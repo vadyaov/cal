@@ -14,6 +14,7 @@ class QRadioButton;
 class QLabel;
 class QFont;
 class QString;
+class QThread;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -37,12 +38,15 @@ class Smartcalc : public QWidget {
     QLabel *xValue_;
 
     int graph;
+    double result;
+    info xinfo;
 
   private slots:
     void onButtonClicked();
     void createWidgets();
     void addWidgetsToLayout(QGridLayout *layout);
     void connectWidgets();
+    void initInfo(info *data);
 };
 
 #endif // SMARTCALC_H

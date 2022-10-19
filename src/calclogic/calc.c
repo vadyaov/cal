@@ -1,33 +1,38 @@
 #include "calc.h"
 
-double calc(char *polishString, info *info) {
-  char *buf = polishString;
-  //printf("polishString=%s\n", buf);
-  struct stack_n *root = NULL;
+double calc(const char *polishString, info *info) {
+  int error = 0;
   double res = 0.0;
-  int i = 0, error = 0;
-  char s = 0;
-  while ((s = buf[i]) != '\0' && !error) {
-    if (is_number(s) || s == 'x') {
-      if (is_number(s)) push_n(&root, convert_to_double(buf + i, &i)); 
-      else {
-        push_n(&root, info->x);
+  char *realPolishString = polish((char *)polishString, &error);
+  if (realPolishString) {
+    char *buf = realPolishString;
+    //printf("polishString=%s\n", buf);
+    struct stack_n *root = NULL;
+    int i = 0;
+    char s = 0;
+    while ((s = buf[i]) != '\0' && !error) {
+      if (is_number(s) || s == 'x') {
+        if (is_number(s)) push_n(&root, convert_to_double(buf + i, &i)); 
+        else {
+          push_n(&root, info->x);
+          i++;
+        }
+      } else {
+        if (is_operator_not_bracket(s))
+          error = makeOperator(&root, s); 
+        else if (is_function(s))
+          error = makeFunction(&root, s);      
         i++;
       }
-    } else {
-      if (is_operator_not_bracket(s))
-        error = makeOperator(&root, s); 
-      else if (is_function(s))
-        error = makeFunction(&root, s);      
-      i++;
     }
-  }
-  if (0 == error) {
-    res = pop_n(&root);
-    //printf("res = %lf\n", res);
-  } else {
+    if (0 == error) {
+      res = pop_n(&root);
+      //printf("res = %lf\n", res);
+    } else {
+      info->err = 1;
+    }
+  } else
     info->err = 1;
-  }
   return res;
 }
 
