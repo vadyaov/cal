@@ -6,7 +6,6 @@ double calc(const char *polishString, info *info) {
   char *realPolishString = polish((char *)polishString, &error);
   if (realPolishString) {
     char *buf = realPolishString;
-    //printf("polishString=%s\n", buf);
     struct stack_n *root = NULL;
     int i = 0;
     char s = 0;
@@ -31,6 +30,7 @@ double calc(const char *polishString, info *info) {
     } else {
       info->err = 1;
     }
+    if (root != NULL) info->err = 1;
   } else
     info->err = 1;
   return res;

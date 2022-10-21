@@ -152,7 +152,6 @@ START_TEST(polish_t12) {
 }
 END_TEST
 
-
 Suite *polishSuite() {
   Suite *polish = suite_create("[Polish Unit Test]");
   TCase *tc = tcase_create("polish");
