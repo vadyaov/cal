@@ -292,7 +292,8 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
 
 void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
   double start = -10.0, end = 10.0;
-  int points = (end - start) / step;
+  int points = (end - start) / step + 1;
+  printf("points = %d\n", points);
   QVector<double> x(points), y(points);
   xinfo.x = start;
   for (int i = 0; i < points; ++i) {
@@ -300,7 +301,6 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
     y[i] = calc(str, &xinfo);
     printf("x = %lf\ty = %lf\n", x[i], y[i]);
     xinfo.x += step;
-    //printf("%lf!\n", xinfo.x);
   }
   plot->graph(0)->setData(x, y);
   plot->graph(0)->rescaleAxes();
