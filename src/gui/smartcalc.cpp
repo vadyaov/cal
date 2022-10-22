@@ -279,6 +279,11 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->yAxis2->setVisible(true);
   plot->yAxis2->setTickLabels(false);
 
+  int pxx = plot->yAxis->coordToPixel(0);
+  int pxy = plot->xAxis->coordToPixel(0);
+  plot->xAxis->setOffset(-plot->axisRect()->height()-plot->axisRect()->top()+pxx);
+  plot->yAxis->setOffset(plot->axisRect()->left()-pxy);
+
   connect(plot->xAxis, SIGNAL(rangeChanged(QCPRange)), plot->xAxis2, SLOT(setRange(QCPRange)));
   connect(plot->yAxis, SIGNAL(rangeChanged(QCPRange)), plot->yAxis2, SLOT(setRange(QCPRange)));
 
