@@ -287,9 +287,10 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
 
 void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
   double start = -10.0, end = 10.0;
-  QVector<double> x(251), y(251);
+  int points = (end - start) / step;
+  QVector<double> x(points), y(points);
   xinfo.x = start;
-  for (int i = 0; i < 251 && xinfo.x <= end; ++i) {
+  for (int i = 0; i < points; ++i) {
     x[i] = xinfo.x;
     y[i] = calc(str, &xinfo);
     printf("x = %lf\ty = %lf\n", x[i], y[i]);
