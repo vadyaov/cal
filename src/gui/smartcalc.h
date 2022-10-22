@@ -2,6 +2,8 @@
 #define SMARTCALC_H
 
 #include <QWidget>
+#include <QPainterPath>
+#include "qcustomplot.h"
 
 extern "C" {
   #include "../calclogic/calc.h"
@@ -14,7 +16,7 @@ class QRadioButton;
 class QLabel;
 class QFont;
 class QString;
-class QThread;
+class QCustomPlot;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -26,18 +28,21 @@ class Smartcalc : public QWidget {
   private:
     QPushButton *button0_, *button1_, *button2_, *button3_, *button4_,
                 *button5_, *button6_, *button7_, *button8_, *button9_,
-                *buttonBspc_, *buttonAc_,
+                *buttonBspc_, *buttonAc_, *buttonX_,
                 *buttonPoint_, *buttonLbracket_, *buttonRbracket_,
                 *buttonDiv_, *buttonMult_, *buttonMinus_, *buttonPlus_,
                 *buttonMod_, *buttonPow_, *buttonEqual_, *buttonSin_,
                 *buttonCos_, *buttonTan_, *buttonAsin_, *buttonAcos_,
                 *buttonAtan_, *buttonLn_, *buttonLog_, *buttonSqrt_;
 
+    QPushButton *test;
+
     QLineEdit *lineEditMain_, *lineEditX_;
     QRadioButton *graphButton_;
     QLabel *xValue_;
 
-    int graph;
+    QCustomPlot *customPlot;
+
     double result;
     info xinfo;
 
@@ -47,6 +52,8 @@ class Smartcalc : public QWidget {
     void addWidgetsToLayout(QGridLayout *layout);
     void connectWidgets();
     void initInfo(info *data);
+    void initGraph(QCustomPlot *plot);
+    void printGraph(QCustomPlot *plot, const char *str, double step);
 };
 
 #endif // SMARTCALC_H

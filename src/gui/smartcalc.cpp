@@ -5,9 +5,8 @@
 Smartcalc::Smartcalc(QWidget *parent) :
     QWidget(parent) {
   
-  graph = 0;
-
   createWidgets();
+  initGraph(customPlot);
   QGridLayout *mainLayout = new QGridLayout;
   addWidgetsToLayout(mainLayout);
   setWindowTitle(tr("Smartcalc_v1.0"));
@@ -28,6 +27,7 @@ Smartcalc::~Smartcalc() {
   delete button9_;
   delete buttonBspc_;
   delete buttonAc_;
+  delete buttonX_;
   delete buttonPoint_;
   delete buttonLbracket_;
   delete buttonRbracket_;
@@ -51,6 +51,7 @@ Smartcalc::~Smartcalc() {
   delete lineEditX_;
   delete graphButton_;
   delete xValue_;
+  delete customPlot;
 }
 
 void Smartcalc::createWidgets() {
@@ -66,6 +67,7 @@ void Smartcalc::createWidgets() {
   button9_ = new QPushButton(tr("9"));
   buttonBspc_ = new QPushButton(tr("<-"));
   buttonAc_ = new QPushButton(tr("AC"));
+  buttonX_ = new QPushButton(tr("x"));
   buttonPoint_ = new QPushButton(tr("."));
   buttonLbracket_ = new QPushButton(tr("("));
   buttonRbracket_ = new QPushButton(tr(")"));
@@ -89,6 +91,7 @@ void Smartcalc::createWidgets() {
   buttonLn_ = new QPushButton(tr("ln"));
   buttonLog_ = new QPushButton(tr("log"));
   buttonSqrt_ = new QPushButton(tr("sqrt"));
+  customPlot = new QCustomPlot();
 }
 
 void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
@@ -104,6 +107,7 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(button9_, 2, 5);
   layout->addWidget(buttonBspc_, 0, 6);
   layout->addWidget(buttonAc_, 1, 6);
+  layout->addWidget(buttonX_, 1, 1);
   layout->addWidget(buttonPoint_, 5, 4);
   layout->addWidget(buttonLbracket_, 1, 3);
   layout->addWidget(buttonRbracket_, 1, 4);
@@ -135,6 +139,7 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   lineEditX_->setText("0.0");  
   lineEditX_->setAlignment(Qt::AlignRight);
   lineEditMain_->setAlignment(Qt::AlignRight);
+  layout->addWidget(customPlot, 6, 0, 50, 6);
 }
 
 void Smartcalc::connectWidgets() {
@@ -150,6 +155,7 @@ void Smartcalc::connectWidgets() {
   connect(button9_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonBspc_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonAc_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(buttonX_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonPoint_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonLbracket_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonRbracket_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
@@ -197,6 +203,8 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->backspace();
   else if (callingButton == buttonAc_)
     lineEditMain_->clear();
+  else if (callingButton == buttonX_)
+    lineEditMain_->setText(lineEditMain_->text() + "x");
   else if (callingButton == buttonPoint_)
     lineEditMain_->setText(lineEditMain_->text() + ".");
   else if (callingButton == buttonLbracket_)
@@ -219,17 +227,21 @@ void Smartcalc::onButtonClicked() {
     initInfo(&xinfo);
     QString mainLine = lineEditMain_->text();
     if (mainLine.isEmpty()) {
-      lineEditMain_->setText("empy line. press AC");
+      lineEditMain_->setText("empy line");
     } else {
-      QString xLine = lineEditX_->text();
       char mainInput[512] = {'\0'};
       strncpy(mainInput, qPrintable(mainLine), 255);
-      if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
-      result = calc(mainInput, &xinfo);
-      lineEditMain_->clear();
-      if (!xinfo.err) lineEditMain_->setText(QString::number(result, 'f', 7));
-      else
-        lineEditMain_->setText("error");
+      if (graphButton_->isChecked()) {
+        printGraph(customPlot, mainInput, 0.2);   
+      } else {
+        QString xLine = lineEditX_->text();
+        if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
+        result = calc(mainInput, &xinfo);
+        lineEditMain_->clear();
+        if (!xinfo.err) lineEditMain_->setText(QString::number(result, 'f', 7));
+        else
+          lineEditMain_->setText("error");
+      }
     }
   }
   else if (callingButton == buttonSin_)
@@ -255,4 +267,35 @@ void Smartcalc::onButtonClicked() {
 void Smartcalc::initInfo(info *data) {
   data->x = 0.0;
   data->err = 0;
+}
+
+void Smartcalc::initGraph(QCustomPlot *plot) {
+  plot->addGraph();
+  plot->graph(0)->setPen(QPen(Qt::blue));
+  plot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20)));
+
+  plot->xAxis2->setVisible(true);
+  plot->xAxis2->setTickLabels(false);
+  plot->yAxis2->setVisible(true);
+  plot->yAxis2->setTickLabels(false);
+
+  connect(plot->xAxis, SIGNAL(rangeChanged(QCPRange)), plot->xAxis2, SLOT(setRange(QCPRange)));
+  connect(plot->yAxis, SIGNAL(rangeChanged(QCPRange)), plot->yAxis2, SLOT(setRange(QCPRange)));
+
+  plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+}
+
+void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
+  double start = -10.0, end = 10.0;
+  QVector<double> x(251), y(251);
+  xinfo.x = start;
+  for (int i = 0; i < 251 && xinfo.x <= end; ++i) {
+    x[i] = xinfo.x;
+    y[i] = calc(str, &xinfo);
+    printf("x = %lf\ty = %lf\n", x[i], y[i]);
+    xinfo.x += step;
+    //printf("%lf!\n", xinfo.x);
+  }
+  plot->graph(0)->setData(x, y);
+  plot->graph(0)->rescaleAxes();
 }
