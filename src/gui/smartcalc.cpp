@@ -61,6 +61,11 @@ Smartcalc::~Smartcalc() {
 }
 
 void Smartcalc::createWidgets() {
+  createButtons();
+  createOther();
+}
+
+void Smartcalc::createButtons() {
   button0_ = new QPushButton(tr("0"));
   button1_ = new QPushButton(tr("1"));
   button2_ = new QPushButton(tr("2"));
@@ -77,10 +82,6 @@ void Smartcalc::createWidgets() {
   buttonPoint_ = new QPushButton(tr("."));
   buttonLbracket_ = new QPushButton(tr("("));
   buttonRbracket_ = new QPushButton(tr(")"));
-  lineEditMain_ = new QLineEdit();
-  lineEditX_ = new QLineEdit();
-  xValue_ = new QLabel(tr("x:"));
-  graphButton_ = new QRadioButton("Graph", this);
   buttonDiv_ = new QPushButton(tr("/"));
   buttonMult_ = new QPushButton(tr("*"));
   buttonMinus_ = new QPushButton(tr("-"));
@@ -97,13 +98,20 @@ void Smartcalc::createWidgets() {
   buttonLn_ = new QPushButton(tr("ln"));
   buttonLog_ = new QPushButton(tr("log"));
   buttonSqrt_ = new QPushButton(tr("sqrt"));
-  customPlot = new QCustomPlot();
-  leftBorder_ = new QLabel(tr("from x:"));
-  rightBorder_ = new QLabel(tr("to x:"));
-  step_ = new QLabel(tr("Step"));
+  graphButton_ = new QRadioButton("Graph", this);
+}
+
+void Smartcalc::createOther() {
+  lineEditMain_ = new QLineEdit();
+  lineEditX_ = new QLineEdit();
   leftBorderLine_ = new QLineEdit();
   rightBorderLine_ = new QLineEdit();
   stepLine_ = new QLineEdit();
+  xValue_ = new QLabel(tr("x:"));
+  leftBorder_ = new QLabel(tr("from x:"));
+  rightBorder_ = new QLabel(tr("to x:"));
+  step_ = new QLabel(tr("Step"));
+  customPlot = new QCustomPlot();
 }
 
 void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
@@ -331,6 +339,8 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
   for (int i = 0; i < points; ++i) {
     x[i] = xinfo.x;
     y[i] = calc(str, &xinfo);
+    if (y[i] > 1000000.0) y[i] = std::numeric_limits<double>::infinity();
+    else if (y[i] < -1000000.0) y[i] = -std::numeric_limits<double>::infinity();
     printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;

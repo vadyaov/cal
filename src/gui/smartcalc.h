@@ -48,7 +48,14 @@ class Smartcalc : public QWidget {
   private slots:
     void onButtonClicked();
     void createWidgets();
+    void createButtons();
+    void createOther();
     void addWidgetsToLayout(QGridLayout *layout);
+    /*
+    void addButtons(QGridLayout *layout);
+    void addOther(QGridLayout *layout);
+    void initWidgetSetup();
+    */
     void connectWidgets();
     void initInfo(info *data);
     void initGraph(QCustomPlot *plot);
