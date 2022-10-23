@@ -1,10 +1,9 @@
-#include <QtWidgets>
 #include "smartcalc.h"
 
+#include <QtWidgets>
+
 // Constructor for main widget
-Smartcalc::Smartcalc(QWidget *parent) :
-    QWidget(parent) {
-  
+Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   createWidgets();
   initGraph(customPlot);
   QGridLayout *mainLayout = new QGridLayout;
@@ -154,13 +153,13 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(xValue_, 5, 1);
   xValue_->setAlignment(Qt::AlignRight);
   QFont f("Arial", 14, QFont::Bold);
-    xValue_->setFont(f);
+  xValue_->setFont(f);
   setLayout(layout);
-  lineEditX_->setText("0.0");  
+  lineEditX_->setText("0.0");
   lineEditX_->setAlignment(Qt::AlignCenter);
   lineEditMain_->setAlignment(Qt::AlignRight);
   layout->addWidget(customPlot, 6, 0, 50, 6);
-  
+
   layout->addWidget(leftBorder_, 6, 6);
   layout->addWidget(rightBorder_, 8, 6);
   layout->addWidget(step_, 10, 6);
@@ -170,7 +169,7 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   leftBorderLine_->setMaximumWidth(80);
   stepLine_->setMaximumWidth(80);
   rightBorderLine_->setMaximumWidth(80);
-  
+
   leftBorderLine_->setText("-50.0");
   rightBorderLine_->setText("50.0");
   stepLine_->setText("0.1");
@@ -261,27 +260,8 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "mod");
   else if (callingButton == buttonPow_)
     lineEditMain_->setText(lineEditMain_->text() + "^");
-  else if (callingButton == buttonEqual_) {
-    initInfo(&xinfo);
-    QString mainLine = lineEditMain_->text();
-    if (mainLine.isEmpty()) {
-      lineEditMain_->setText("empy line");
-    } else {
-      char mainInput[512] = {'\0'};
-      strncpy(mainInput, qPrintable(mainLine), 255);
-      if (graphButton_->isChecked()) {
-        printGraph(customPlot, mainInput);   
-      } else {
-        QString xLine = lineEditX_->text();
-        if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
-        result = calc(mainInput, &xinfo);
-        lineEditMain_->clear();
-        if (!xinfo.err) lineEditMain_->setText(QString::number(result, 'f', 7));
-        else
-          lineEditMain_->setText("error");
-      }
-    }
-  }
+  else if (callingButton == buttonEqual_)
+    doEqualButton();
   else if (callingButton == buttonSin_)
     lineEditMain_->setText(lineEditMain_->text() + "sin(");
   else if (callingButton == buttonCos_)
@@ -302,6 +282,29 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "sqrt(");
 }
 
+void Smartcalc::doEqualButton() {
+  initInfo(&xinfo);
+  QString mainLine = lineEditMain_->text();
+  if (mainLine.isEmpty()) {
+    lineEditMain_->setText("empy line");
+  } else {
+    char mainInput[512] = {'\0'};
+    strncpy(mainInput, qPrintable(mainLine), 255);
+    if (graphButton_->isChecked()) {
+      printGraph(customPlot, mainInput);
+    } else {
+      QString xLine = lineEditX_->text();
+      if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
+      result = calc(mainInput, &xinfo);
+      lineEditMain_->clear();
+      if (!xinfo.err)
+        lineEditMain_->setText(QString::number(result, 'f', 7));
+      else
+        lineEditMain_->setText("error");
+    }
+  }
+}
+
 void Smartcalc::initInfo(info *data) {
   data->x = 0.0;
   data->err = 0;
@@ -319,28 +322,33 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
 
   int pxx = plot->yAxis->coordToPixel(0);
   int pxy = plot->xAxis->coordToPixel(0);
-  plot->xAxis->setOffset(-plot->axisRect()->height()-plot->axisRect()->top()+pxx);
-  plot->yAxis->setOffset(plot->axisRect()->left()-pxy);
+  plot->xAxis->setOffset(-plot->axisRect()->height() - plot->axisRect()->top() +
+                         pxx);
+  plot->yAxis->setOffset(plot->axisRect()->left() - pxy);
 
-  connect(plot->xAxis, SIGNAL(rangeChanged(QCPRange)), plot->xAxis2, SLOT(setRange(QCPRange)));
-  connect(plot->yAxis, SIGNAL(rangeChanged(QCPRange)), plot->yAxis2, SLOT(setRange(QCPRange)));
+  connect(plot->xAxis, SIGNAL(rangeChanged(QCPRange)), plot->xAxis2,
+          SLOT(setRange(QCPRange)));
+  connect(plot->yAxis, SIGNAL(rangeChanged(QCPRange)), plot->yAxis2,
+          SLOT(setRange(QCPRange)));
 
-  plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+  plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
+                        QCP::iSelectPlottables);
 }
 
 void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
-  double start = leftBorderLine_->text().toDouble(), 
+  double start = leftBorderLine_->text().toDouble(),
          end = rightBorderLine_->text().toDouble(),
          step = stepLine_->text().toDouble();
   int points = (end - start) / step + 1;
-  printf("points = %d\n", points);
   QVector<double> x(points), y(points);
   xinfo.x = start;
   for (int i = 0; i < points; ++i) {
     x[i] = xinfo.x;
     y[i] = calc(str, &xinfo);
-    if (y[i] > 1000000.0) y[i] = std::numeric_limits<double>::infinity();
-    else if (y[i] < -1000000.0) y[i] = -std::numeric_limits<double>::infinity();
+    if (y[i] > 1000000.0)
+      y[i] = std::numeric_limits<double>::infinity();
+    else if (y[i] < -1000000.0)
+      y[i] = -std::numeric_limits<double>::infinity();
     printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
