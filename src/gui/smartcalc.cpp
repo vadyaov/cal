@@ -10,6 +10,7 @@ Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   addWidgetsToLayout(mainLayout);
   setWindowTitle(tr("Smartcalc_v1.0"));
   connectWidgets();
+  customWidgets();
 }
 
 // Destructor
@@ -339,10 +340,10 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
   double start = leftBorderLine_->text().toDouble(),
          end = rightBorderLine_->text().toDouble(),
          step = stepLine_->text().toDouble();
-  int points = (end - start) / step + 1;
-  QVector<double> x(points), y(points);
+  int dots = (end - start) / step + 1;
+  QVector<double> x(dots), y(dots);
   xinfo.x = start;
-  for (int i = 0; i < points; ++i) {
+  for (int i = 0; i < dots; ++i) {
     x[i] = xinfo.x;
     y[i] = calc(str, &xinfo);
     if (y[i] > 1000000.0)
@@ -354,5 +355,19 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
   }
   plot->graph(0)->setData(x, y);
-  plot->graph(0)->rescaleAxes();
+  plot->xAxis->rescale();
+}
+
+void Smartcalc::customWidgets() {
+  lineEditMain_->setProperty("mandatoryField", true);
+  lineEditMain_->setStyleSheet("color: black;"
+                         "background-color: white;"
+                         "selection-background-color: grey;");
+  lineEditX_->setStyleSheet("color: white;"
+                         "background-color: grey;");
+  leftBorderLine_->setStyleSheet("color: blue;"
+                         "background-color: lightgrey;");
+  rightBorderLine_->setStyleSheet("color: blue;"
+                         "background-color: lightgrey;");
+  buttonEqual_->setStyleSheet("color: black; background-color: lightBlue;");
 }

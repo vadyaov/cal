@@ -60,6 +60,7 @@ class Smartcalc : public QWidget {
   void initInfo(info *data);
   void initGraph(QCustomPlot *plot);
   void printGraph(QCustomPlot *plot, const char *str);
+  void customWidgets();
 };
 
 #endif  // SMARTCALC_H
