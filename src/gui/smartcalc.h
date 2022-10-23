@@ -35,11 +35,10 @@ class Smartcalc : public QWidget {
                 *buttonCos_, *buttonTan_, *buttonAsin_, *buttonAcos_,
                 *buttonAtan_, *buttonLn_, *buttonLog_, *buttonSqrt_;
 
-    QPushButton *test;
-
-    QLineEdit *lineEditMain_, *lineEditX_;
+    QLineEdit *lineEditMain_, *lineEditX_, *leftBorderLine_, *rightBorderLine_,
+              *stepLine_;
     QRadioButton *graphButton_;
-    QLabel *xValue_;
+    QLabel *xValue_, *leftBorder_, *rightBorder_, *step_;
 
     QCustomPlot *customPlot;
 
@@ -53,7 +52,7 @@ class Smartcalc : public QWidget {
     void connectWidgets();
     void initInfo(info *data);
     void initGraph(QCustomPlot *plot);
-    void printGraph(QCustomPlot *plot, const char *str, double step);
+    void printGraph(QCustomPlot *plot, const char *str);
 };
 
 #endif // SMARTCALC_H

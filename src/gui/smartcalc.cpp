@@ -52,6 +52,12 @@ Smartcalc::~Smartcalc() {
   delete graphButton_;
   delete xValue_;
   delete customPlot;
+  delete leftBorder_;
+  delete rightBorder_;
+  delete step_;
+  delete leftBorderLine_;
+  delete rightBorderLine_;
+  delete stepLine_;
 }
 
 void Smartcalc::createWidgets() {
@@ -92,6 +98,12 @@ void Smartcalc::createWidgets() {
   buttonLog_ = new QPushButton(tr("log"));
   buttonSqrt_ = new QPushButton(tr("sqrt"));
   customPlot = new QCustomPlot();
+  leftBorder_ = new QLabel(tr("from x:"));
+  rightBorder_ = new QLabel(tr("to x:"));
+  step_ = new QLabel(tr("Step"));
+  leftBorderLine_ = new QLineEdit();
+  rightBorderLine_ = new QLineEdit();
+  stepLine_ = new QLineEdit();
 }
 
 void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
@@ -137,9 +149,27 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
     xValue_->setFont(f);
   setLayout(layout);
   lineEditX_->setText("0.0");  
-  lineEditX_->setAlignment(Qt::AlignRight);
+  lineEditX_->setAlignment(Qt::AlignCenter);
   lineEditMain_->setAlignment(Qt::AlignRight);
   layout->addWidget(customPlot, 6, 0, 50, 6);
+  
+  layout->addWidget(leftBorder_, 6, 6);
+  layout->addWidget(rightBorder_, 8, 6);
+  layout->addWidget(step_, 10, 6);
+  layout->addWidget(leftBorderLine_, 7, 6);
+  layout->addWidget(rightBorderLine_, 9, 6);
+  layout->addWidget(stepLine_, 11, 6);
+  leftBorderLine_->setMaximumWidth(80);
+  stepLine_->setMaximumWidth(80);
+  rightBorderLine_->setMaximumWidth(80);
+  
+  leftBorderLine_->setText("-50.0");
+  rightBorderLine_->setText("50.0");
+  stepLine_->setText("0.1");
+
+  leftBorderLine_->setAlignment(Qt::AlignCenter);
+  rightBorderLine_->setAlignment(Qt::AlignCenter);
+  stepLine_->setAlignment(Qt::AlignCenter);
 }
 
 void Smartcalc::connectWidgets() {
@@ -232,7 +262,7 @@ void Smartcalc::onButtonClicked() {
       char mainInput[512] = {'\0'};
       strncpy(mainInput, qPrintable(mainLine), 255);
       if (graphButton_->isChecked()) {
-        printGraph(customPlot, mainInput, 0.2);   
+        printGraph(customPlot, mainInput);   
       } else {
         QString xLine = lineEditX_->text();
         if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
@@ -275,9 +305,9 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20)));
 
   plot->xAxis2->setVisible(true);
-  plot->xAxis2->setTickLabels(false);
+  plot->xAxis2->setTickLabels(true);
   plot->yAxis2->setVisible(true);
-  plot->yAxis2->setTickLabels(false);
+  plot->yAxis2->setTickLabels(true);
 
   int pxx = plot->yAxis->coordToPixel(0);
   int pxy = plot->xAxis->coordToPixel(0);
@@ -290,8 +320,10 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 }
 
-void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
-  double start = -10.0, end = 10.0;
+void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
+  double start = leftBorderLine_->text().toDouble(), 
+         end = rightBorderLine_->text().toDouble(),
+         step = stepLine_->text().toDouble();
   int points = (end - start) / step + 1;
   printf("points = %d\n", points);
   QVector<double> x(points), y(points);
@@ -299,8 +331,9 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str, double step) {
   for (int i = 0; i < points; ++i) {
     x[i] = xinfo.x;
     y[i] = calc(str, &xinfo);
-    printf("x = %lf\ty = %lf\n", x[i], y[i]);
+    printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
+    if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
   }
   plot->graph(0)->setData(x, y);
   plot->graph(0)->rescaleAxes();
