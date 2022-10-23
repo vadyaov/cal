@@ -2,8 +2,7 @@ CC := gcc
 calclib := calc.a
 calclib_gcov := gcov$(calclib)
 
-ASAN := #-fsanitize=address -g
-CFLAGS := -Wall -Werror -Wextra -std=c11 -pedantic -fanalyzer $(ASAN)
+CFLAGS := -Wall -Werror -Wextra -std=c11 -pedantic -fanalyzer
 TEST_FLAGS := $(CFLAGS) $(shell pkg-config --cflags check)
 GCOV_FLAGS := -fprofile-arcs -ftest-coverage
 
@@ -85,3 +84,13 @@ clean:
 	rm -f ./tests/test_gcov
 	rm -rf ./objects/ ./tests/objects/ ./coverage/
 
+valgrind:
+	valgrind --leak-check=full ./tests/test
+
+cppcheck:
+	cppcheck --enable=all $(wildcard *.c)
+
+clang:
+	clang-format -n $(wildcard *.c) $(wildcard *.h)
+
+.PHONY: clean all valgrind cppcheck clang test

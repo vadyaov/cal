@@ -1,4 +1,5 @@
 #include <string.h>
+
 #include "libs.h"
 
 char *polish(const char *input, int *err);

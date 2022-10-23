@@ -1,6 +1,7 @@
 #include <math.h>
-#include "stack_numb.h"
+
 #include "polish.h"
+#include "stack_numb.h"
 
 typedef struct xinfo {
   double x;

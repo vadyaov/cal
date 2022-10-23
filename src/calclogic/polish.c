@@ -1,25 +1,25 @@
 #include "polish.h"
+
 #include "stack_symb.h"
 
 char *polish(const char *input, int *err) {
-  char *new_input = NULL, *input_start = NULL,
-       *output = NULL, *output_start = NULL;
+  char *new_input = NULL, *input_start = NULL, *output = NULL,
+       *output_start = NULL;
   struct stack_s *root = NULL;
   if (input) {
     new_input = pretty_input(input, err);
-    //printf("new:%s\n%ld\n", new_input, strlen(new_input));
     input_start = new_input;
     if (new_input) {
       int future_spaces = fspaces(new_input),
           future_symbol = fsymbol(new_input);
-      //printf("fsp = %d\tfsymb = %d\n", future_spaces, future_symbol);
       output = calloc(future_spaces + future_symbol + 1, sizeof(char));
       output_start = output;
       if (output) {
         char a;
         while ((a = *new_input) != '\0' && !*err) {
           if (is_number(a) || a == 'x') {
-            if (a == 'x') *output++ = a;
+            if (a == 'x')
+              *output++ = a;
             else {
               int i = 0;
               output = put_in_out(new_input, output, &i);
@@ -41,10 +41,9 @@ char *polish(const char *input, int *err) {
           } else if (is_operator_not_bracket(a)) {
             if (root) {
               char b = peek_s(root);
-              //printf("a = %c\nb=%c\n", a, b);
               int pr = give_priority(a);
               while (b && (is_function(b) || ((is_operator_not_bracket(b) &&
-                     give_priority(b) >= pr)))) {
+                                               give_priority(b) >= pr)))) {
                 if (pr == 2 && a == b) break;
                 *output++ = pop_s(&root);
                 *output++ = ' ';
@@ -61,23 +60,14 @@ char *polish(const char *input, int *err) {
           if (is_operator_not_bracket(b) || is_function(b)) {
             *output++ = pop_s(&root);
             if (root) *output++ = ' ';
-          } else {
-            printf("Error!\n");
+          } else
             *err = 1;
-          }
         }
         *(output) = '\0';
-      } else {
-        printf("Memory disaster.\n");
       }
-    } else {
-      printf("INPUT FAIL\n");
     }
   }
-  if (*err) {
-    destroy_s(&root);
-    *err = 1;
-  }
+  if (*err) destroy_s(&root);
   return output_start;
 }
 
@@ -107,12 +97,9 @@ char *pretty_input(const char *input, int *error) {
       find_unary(no_del_input);
       perfect = space_btw(no_del_input, error);
       free(no_del_input);
-    } else {
-      printf("Malloc memory error.\n");
     }
-  } else {
-    printf("Incorrect input\n");
-  }
+  } else
+    *error = 1;
   return perfect;
 }
 
@@ -129,10 +116,10 @@ int is_bad_symb(char c, const char *symbols) {
 }
 
 char hash(const char *src, int *n, int *replace) {
-  char symb[] = "msctSCTqlg", out = 0;
+  const char symb[] = "msctSCTqlg";
   *replace = 0;
-  char *functions[] = {"mod",  "sin",  "cos",  "tan", "asin",
-                       "acos", "atan", "sqrt", "ln",  "log"};
+  char out = 0, *functions[] = {"mod",  "sin",  "cos",  "tan", "asin",
+                                "acos", "atan", "sqrt", "ln",  "log"};
   int i = 0, l = 0;
   for (; i < 10 && !out; i++) {
     l = strlen(functions[i]);
@@ -149,12 +136,12 @@ int is_number(char c) { return (c >= '0' && c <= '9'); }
 
 int is_letter(char c) { return (c >= 'a' && c <= 'z'); }
 
-int is_operator(char c) { 
+int is_operator(char c) {
   char op[] = "|~()+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
 
-int is_operator_not_bracket(char c) { 
+int is_operator_not_bracket(char c) {
   char op[] = "|~m+-/*^";
   return (strchr(op, c) ? 1 : 0);
 }
@@ -195,7 +182,7 @@ char *space_btw(char *src, int *error) {
         probel++;
         length -= replace;
       } else if (src[i] == 'x') {
-        probel++; 
+        probel++;
       } else {
         *error = 1;
       }
@@ -226,8 +213,6 @@ char *space_btw(char *src, int *error) {
         if (src[i]) *out++ = ' ';
       }
       *out = '\0';
-    } else {
-      printf("Malloc memory fail\n");
     }
   }
   return buf;
@@ -269,13 +254,16 @@ void find_unary(char *src) {
   while (buf[i] != '\0') {
     if (buf[i] == '-' || buf[i] == '+') {
       if (i == 0) {
-        if (buf[i] == '-') buf[i] = '~';
-        else buf[i] = '|';
-      } else if (buf[i - 1] == '(' ||
-               is_operator_not_bracket(buf[i - 1]) ||
-               (i > 2 && hash(buf + i - 3, &j, &j) == 'm')) {
-        if (buf[i] == '-') buf[i] = '~';
-        else buf[i] = '|';
+        if (buf[i] == '-')
+          buf[i] = '~';
+        else
+          buf[i] = '|';
+      } else if (buf[i - 1] == '(' || is_operator_not_bracket(buf[i - 1]) ||
+                 (i > 2 && hash(buf + i - 3, &j, &j) == 'm')) {
+        if (buf[i] == '-')
+          buf[i] = '~';
+        else
+          buf[i] = '|';
       }
     }
     i++;

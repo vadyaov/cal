@@ -7,8 +7,6 @@ void push_n(struct stack_n **root, double num) {
     new->number = num;
     new->next = tmp;
     *root = new;
-  } else {
-    printf("Malloc memory fail.\n");
   }
 }
 
@@ -20,6 +18,10 @@ double pop_n(struct stack_n **root) {
   (*root) = tmp;
   return num;
 }
+
+/*                                   *
+ * GOOD STUFF BUT I DON'T NEED IT :( *
+ *                                   *
 
 double peek_n(struct stack_n* root) {
   double num = 0;
@@ -48,3 +50,4 @@ void print_stack_n(struct stack_n *root) {
   }
   printf("\n");
 }
+*/

@@ -7,8 +7,6 @@ void push_s(struct stack_s **root, char s) {
     new->c = s;
     new->next = tmp;
     *root = new;
-  } else {
-    printf("Malloc memory fail.\n");
   }
 }
 
@@ -21,7 +19,7 @@ char pop_s(struct stack_s **root) {
   return s;
 }
 
-char peek_s(struct stack_s* root) {
+char peek_s(struct stack_s *root) {
   char c = 0;
   if (root) c = root->c;
   return c;
@@ -38,6 +36,10 @@ void destroy_s(struct stack_s **root) {
   (*root) = NULL;
 }
 
+/*                                   *
+ * GOOD STUFF BUT I DON'T NEED IT :( *
+ *                                   *
+
 void print_stack_s(struct stack_s *root) {
   struct stack_s *tmp = root;
   if (!tmp) printf("empty stack_s!\n");
@@ -48,3 +50,4 @@ void print_stack_s(struct stack_s *root) {
   }
   printf("\n");
 }
+*/
