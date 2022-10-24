@@ -6,7 +6,7 @@
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   createWidgets();
   initGraph(customPlot);
-  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout = new QGridLayout;
   addWidgetsToLayout(mainLayout);
   setWindowTitle(tr("Smartcalc_v1.0"));
   connectWidgets();
@@ -58,6 +58,9 @@ Smartcalc::~Smartcalc() {
   delete leftBorderLine_;
   delete rightBorderLine_;
   delete stepLine_;
+  delete Mudro_;
+  delete wiseTree_;
+  delete mainLayout;
 }
 
 void Smartcalc::createWidgets() {
@@ -76,7 +79,7 @@ void Smartcalc::createButtons() {
   button7_ = new QPushButton(tr("7"));
   button8_ = new QPushButton(tr("8"));
   button9_ = new QPushButton(tr("9"));
-  buttonBspc_ = new QPushButton(tr("<-"));
+  buttonBspc_ = new QPushButton();
   buttonAc_ = new QPushButton(tr("AC"));
   buttonX_ = new QPushButton(tr("x"));
   buttonPoint_ = new QPushButton(tr("."));
@@ -99,6 +102,7 @@ void Smartcalc::createButtons() {
   buttonLog_ = new QPushButton(tr("log"));
   buttonSqrt_ = new QPushButton(tr("sqrt"));
   graphButton_ = new QRadioButton("Graph", this);
+  Mudro_ = new QPushButton(tr("Wise Tree"));
 }
 
 void Smartcalc::createOther() {
@@ -112,6 +116,7 @@ void Smartcalc::createOther() {
   rightBorder_ = new QLabel(tr("to x:"));
   step_ = new QLabel(tr("Step"));
   customPlot = new QCustomPlot();
+  wiseTree_ = new QLabel(tr("tree soon..."));
 }
 
 void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
@@ -149,35 +154,17 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(buttonSqrt_, 4, 2);
   layout->addWidget(lineEditMain_, 0, 0, 1, 6);
   layout->addWidget(lineEditX_, 5, 2);
-  lineEditX_->setMaximumWidth(80);
   layout->addWidget(graphButton_, 5, 0);
+  layout->addWidget(Mudro_, 1, 0);
   layout->addWidget(xValue_, 5, 1);
-  xValue_->setAlignment(Qt::AlignRight);
-  QFont f("Arial", 14, QFont::Bold);
-  xValue_->setFont(f);
-  setLayout(layout);
-  lineEditX_->setText("0.0");
-  lineEditX_->setAlignment(Qt::AlignCenter);
-  lineEditMain_->setAlignment(Qt::AlignRight);
   layout->addWidget(customPlot, 6, 0, 50, 6);
-
   layout->addWidget(leftBorder_, 6, 6);
   layout->addWidget(rightBorder_, 8, 6);
   layout->addWidget(step_, 10, 6);
   layout->addWidget(leftBorderLine_, 7, 6);
   layout->addWidget(rightBorderLine_, 9, 6);
   layout->addWidget(stepLine_, 11, 6);
-  leftBorderLine_->setMaximumWidth(80);
-  stepLine_->setMaximumWidth(80);
-  rightBorderLine_->setMaximumWidth(80);
-
-  leftBorderLine_->setText("-50.0");
-  rightBorderLine_->setText("50.0");
-  stepLine_->setText("0.1");
-
-  leftBorderLine_->setAlignment(Qt::AlignCenter);
-  rightBorderLine_->setAlignment(Qt::AlignCenter);
-  stepLine_->setAlignment(Qt::AlignCenter);
+  setLayout(layout);
 }
 
 void Smartcalc::connectWidgets() {
@@ -213,6 +200,7 @@ void Smartcalc::connectWidgets() {
   connect(buttonLn_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonLog_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonSqrt_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+  connect(Mudro_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
 }
 
 void Smartcalc::onButtonClicked() {
@@ -281,6 +269,8 @@ void Smartcalc::onButtonClicked() {
     lineEditMain_->setText(lineEditMain_->text() + "log(");
   else if (callingButton == buttonSqrt_)
     lineEditMain_->setText(lineEditMain_->text() + "sqrt(");
+  else if (callingButton == Mudro_)
+    mudroFunction();
 }
 
 void Smartcalc::doEqualButton() {
@@ -350,7 +340,7 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
       y[i] = std::numeric_limits<double>::infinity();
     else if (y[i] < -1000000.0)
       y[i] = -std::numeric_limits<double>::infinity();
-    printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
+    //printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
   }
@@ -359,15 +349,54 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
 }
 
 void Smartcalc::customWidgets() {
+  xValue_->setAlignment(Qt::AlignRight);
+  QFont f("Arial", 14, QFont::Bold);
+  xValue_->setFont(f);
+  lineEditX_->setText("0.0");
+  lineEditX_->setMaximumWidth(80);
+  lineEditX_->setAlignment(Qt::AlignCenter);
+  leftBorderLine_->setMaximumWidth(80);
+  stepLine_->setMaximumWidth(80);
+  rightBorderLine_->setMaximumWidth(80);
+  leftBorderLine_->setText("-50.0");
+  rightBorderLine_->setText("50.0");
+  stepLine_->setText("0.1");
+  leftBorderLine_->setAlignment(Qt::AlignCenter);
+  rightBorderLine_->setAlignment(Qt::AlignCenter);
+  stepLine_->setAlignment(Qt::AlignCenter);
+  lineEditMain_->setAlignment(Qt::AlignRight);
   lineEditMain_->setProperty("mandatoryField", true);
   lineEditMain_->setStyleSheet("color: black;"
                          "background-color: white;"
                          "selection-background-color: grey;");
-  lineEditX_->setStyleSheet("color: white;"
-                         "background-color: grey;");
+  lineEditX_->setStyleSheet("color: black;"
+                         "background-color: lightgrey;");
+  QFont fontX = {"Arial", 12, QFont::Bold};
+  buttonX_->setFont(fontX);
   leftBorderLine_->setStyleSheet("color: blue;"
                          "background-color: lightgrey;");
   rightBorderLine_->setStyleSheet("color: blue;"
                          "background-color: lightgrey;");
   buttonEqual_->setStyleSheet("color: black; background-color: lightBlue;");
+  button0_->setStyleSheet("color: black; background-color: grey;");
+  button1_->setStyleSheet("color: black; background-color: grey;");
+  button2_->setStyleSheet("color: black; background-color: grey;");
+  button3_->setStyleSheet("color: black; background-color: grey;");
+  button4_->setStyleSheet("color: black; background-color: grey;");
+  button5_->setStyleSheet("color: black; background-color: grey;");
+  button6_->setStyleSheet("color: black; background-color: grey;");
+  button7_->setStyleSheet("color: black; background-color: grey;");
+  button8_->setStyleSheet("color: black; background-color: grey;");
+  button9_->setStyleSheet("color: black; background-color: grey;");
+  buttonPoint_->setStyleSheet("color: black; background-color: grey;");
+  buttonBspc_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+  wiseTree_->setStyleSheet("background-color: blue;");
+}
+
+void Smartcalc::mudroFunction() {
+  QString imagePath = "index.png";
+  QPixmap img(imagePath);
+  wiseTree_->setMaximumWidth(80);
+  wiseTree_->setPixmap(img);
+  mainLayout->addWidget(wiseTree_, 12, 6);
 }

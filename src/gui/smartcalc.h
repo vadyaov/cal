@@ -18,6 +18,8 @@ class QLabel;
 class QFont;
 class QString;
 class QCustomPlot;
+class QStyle;
+class QPixmap;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -27,17 +29,19 @@ class Smartcalc : public QWidget {
   ~Smartcalc();                    // Destructor
 
  private:
+  QGridLayout *mainLayout;
   QPushButton *button0_, *button1_, *button2_, *button3_, *button4_, *button5_,
       *button6_, *button7_, *button8_, *button9_, *buttonBspc_, *buttonAc_,
       *buttonX_, *buttonPoint_, *buttonLbracket_, *buttonRbracket_, *buttonDiv_,
       *buttonMult_, *buttonMinus_, *buttonPlus_, *buttonMod_, *buttonPow_,
       *buttonEqual_, *buttonSin_, *buttonCos_, *buttonTan_, *buttonAsin_,
-      *buttonAcos_, *buttonAtan_, *buttonLn_, *buttonLog_, *buttonSqrt_;
+      *buttonAcos_, *buttonAtan_, *buttonLn_, *buttonLog_, *buttonSqrt_,
+      *Mudro_;
 
   QLineEdit *lineEditMain_, *lineEditX_, *leftBorderLine_, *rightBorderLine_,
       *stepLine_;
   QRadioButton *graphButton_;
-  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_;
+  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *wiseTree_;
 
   QCustomPlot *customPlot;
 
@@ -61,6 +65,7 @@ class Smartcalc : public QWidget {
   void initGraph(QCustomPlot *plot);
   void printGraph(QCustomPlot *plot, const char *str);
   void customWidgets();
+  void mudroFunction();
 };
 
 #endif  // SMARTCALC_H
