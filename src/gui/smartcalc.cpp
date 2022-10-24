@@ -317,9 +317,9 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20)));
 
   plot->xAxis2->setVisible(true);
-  plot->xAxis2->setTickLabels(true);
+  plot->xAxis2->setTickLabels(false);
   plot->yAxis2->setVisible(true);
-  plot->yAxis2->setTickLabels(true);
+  plot->yAxis2->setTickLabels(false);
 
   int pxx = plot->yAxis->coordToPixel(0);
   int pxy = plot->xAxis->coordToPixel(0);
