@@ -20,6 +20,7 @@ class QString;
 class QCustomPlot;
 class QStyle;
 class QPixmap;
+class QTabWidget;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -29,7 +30,7 @@ class Smartcalc : public QWidget {
   ~Smartcalc();                    // Destructor
 
  private:
-  QGridLayout *mainLayout;
+  QGridLayout *mainLayout, *creditLayout;
   QPushButton *button0_, *button1_, *button2_, *button3_, *button4_, *button5_,
       *button6_, *button7_, *button8_, *button9_, *buttonBspc_, *buttonAc_,
       *buttonX_, *buttonPoint_, *buttonLbracket_, *buttonRbracket_, *buttonDiv_,
@@ -40,10 +41,21 @@ class Smartcalc : public QWidget {
 
   QLineEdit *lineEditMain_, *lineEditX_, *leftBorderLine_, *rightBorderLine_,
       *stepLine_;
-  QRadioButton *graphButton_;
+
   QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *wiseTree_;
 
   QCustomPlot *customPlot;
+
+  QTabWidget *calcWidget;
+
+  QFrame *frame1, *frame2;
+
+  QRadioButton *graphButton_, *annulling_, *differ_;
+
+  QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_,
+         *percent_;
+
+  QLineEdit *sumLine_, *yearLine_, *monthLine_, *percentLine_;
 
   double result;
   info xinfo;
@@ -54,11 +66,6 @@ class Smartcalc : public QWidget {
   void createButtons();
   void createOther();
   void addWidgetsToLayout(QGridLayout *layout);
-  /*
-  void addButtons(QGridLayout *layout);
-  void addOther(QGridLayout *layout);
-  void initWidgetSetup();
-  */
   void connectWidgets();
   void doEqualButton();
   void initInfo(info *data);
@@ -66,6 +73,10 @@ class Smartcalc : public QWidget {
   void printGraph(QCustomPlot *plot, const char *str);
   void customWidgets();
   void mudroFunction();
+
+  void createCreditWidgets();
+  void addCreditWidgetsToLayout(QGridLayout *layout);
+
 };
 
 #endif  // SMARTCALC_H

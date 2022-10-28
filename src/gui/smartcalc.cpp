@@ -4,13 +4,25 @@
 
 // Constructor for main widget
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
+  frame1 = new QFrame(this);
+  frame2 = new QFrame(this);
+  frame1->setGeometry(0, 0, 750, 750);
+  frame2->setGeometry(0, 0, 750, 750);
+  calcWidget = new QTabWidget(this);
   createWidgets();
+  createCreditWidgets();
   initGraph(customPlot);
-  mainLayout = new QGridLayout;
+  mainLayout = new QGridLayout(frame1);
+  creditLayout = new QGridLayout(frame2);
   addWidgetsToLayout(mainLayout);
+  addCreditWidgetsToLayout(creditLayout);
+  frame1->setLayout(mainLayout);
+  frame2->setLayout(creditLayout);
   setWindowTitle(tr("Smartcalc_v1.0"));
   connectWidgets();
   customWidgets();
+  calcWidget->addTab(frame1, "calc");
+  calcWidget->addTab(frame2, "credit");
 }
 
 // Destructor
@@ -61,6 +73,9 @@ Smartcalc::~Smartcalc() {
   delete Mudro_;
   delete wiseTree_;
   delete mainLayout;
+  delete frame1;
+  delete frame2;
+  delete calcWidget;
 }
 
 void Smartcalc::createWidgets() {
@@ -116,7 +131,7 @@ void Smartcalc::createOther() {
   rightBorder_ = new QLabel(tr("to x:"));
   step_ = new QLabel(tr("Step"));
   customPlot = new QCustomPlot();
-  wiseTree_ = new QLabel(tr("tree soon..."));
+  wiseTree_ = new QLabel();
 }
 
 void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
@@ -164,7 +179,6 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(leftBorderLine_, 7, 6);
   layout->addWidget(rightBorderLine_, 9, 6);
   layout->addWidget(stepLine_, 11, 6);
-  setLayout(layout);
 }
 
 void Smartcalc::connectWidgets() {
@@ -343,9 +357,14 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
     //printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
+    if (xinfo.err) {
+      lineEditMain_->setText("error");
+      return;
+    }
   }
   plot->graph(0)->setData(x, y);
   plot->xAxis->rescale();
+  plot->replot();
 }
 
 void Smartcalc::customWidgets() {
@@ -399,4 +418,36 @@ void Smartcalc::mudroFunction() {
   wiseTree_->setMaximumWidth(80);
   wiseTree_->setPixmap(img);
   mainLayout->addWidget(wiseTree_, 12, 6);
+}
+
+void Smartcalc::createCreditWidgets() {
+  creditSum_ = new QLabel(tr("Loan Amount"));
+  creditTime_ = new QLabel(tr("Loan Term"));
+  interestRate_ = new QLabel(tr("Interest Rate"));
+  paymentType_ = new QLabel(tr("Compound"));
+  percent_ = new QLabel(tr("%"));
+
+  sumLine_ = new QLineEdit();
+  yearLine_ = new QLineEdit();
+  monthLine_ = new QLineEdit();
+  percentLine_ = new QLineEdit();
+
+  annulling_ = new QRadioButton(tr("Annually"));
+  differ_ = new QRadioButton(tr("Monthly"));
+}
+
+void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
+  layout->addWidget(creditSum_, 0, 0);
+  layout->addWidget(creditTime_, 1, 0);
+  layout->addWidget(interestRate_, 3, 0);
+  layout->addWidget(paymentType_, 4, 0);
+  layout->addWidget(percent_, 3, 2);
+
+  layout->addWidget(sumLine_, 0, 1); 
+  layout->addWidget(yearLine_, 1, 1); 
+  layout->addWidget(monthLine_, 2, 1); 
+  layout->addWidget(percentLine_, 3, 1); 
+
+  layout->addWidget(annulling_, 4, 1); 
+  layout->addWidget(differ_, 5, 1); 
 }
