@@ -4,25 +4,22 @@
 
 // Constructor for main widget
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
-  frame1 = new QFrame(this);
-  frame2 = new QFrame(this);
-  frame1->setGeometry(0, 0, 750, 750);
-  frame2->setGeometry(0, 0, 750, 750);
-  calcWidget = new QTabWidget(this);
   createWidgets();
   createCreditWidgets();
   initGraph(customPlot);
-  mainLayout = new QGridLayout(frame1);
-  creditLayout = new QGridLayout(frame2);
   addWidgetsToLayout(mainLayout);
   addCreditWidgetsToLayout(creditLayout);
   frame1->setLayout(mainLayout);
   frame2->setLayout(creditLayout);
-  setWindowTitle(tr("Smartcalc_v1.0"));
   connectWidgets();
   customWidgets();
+  monthLine_->setPlaceholderText(QString("months"));
+  yearLine_->setPlaceholderText(QString("years"));
+  percentLine_->setPlaceholderText(QString("%"));
+  sumLine_->setPlaceholderText(QString("$"));
   calcWidget->addTab(frame1, "calc");
   calcWidget->addTab(frame2, "credit");
+  setWindowTitle(tr("Smartcalc_v1.0"));
 }
 
 // Destructor
@@ -73,12 +70,28 @@ Smartcalc::~Smartcalc() {
   delete Mudro_;
   delete wiseTree_;
   delete mainLayout;
+  delete creditLayout;
+  delete annulling_;
+  delete differ_;
+  delete creditSum_;
+  delete creditTime_;
+  delete interestRate_;
+  delete paymentType_;
+  delete sumLine_;
+  delete yearLine_;
+  delete monthLine_;
+  delete percentLine_;
   delete frame1;
   delete frame2;
   delete calcWidget;
 }
 
 void Smartcalc::createWidgets() {
+  frame1 = new QFrame(this);
+  frame2 = new QFrame(this);
+  mainLayout = new QGridLayout(frame1);
+  creditLayout = new QGridLayout(frame2);
+  calcWidget = new QTabWidget(this);
   createButtons();
   createOther();
 }
@@ -368,6 +381,8 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
 }
 
 void Smartcalc::customWidgets() {
+  frame1->setGeometry(0, 0, 750, 750);
+  frame2->setGeometry(0, 0, 300, 300);
   xValue_->setAlignment(Qt::AlignRight);
   QFont f("Arial", 14, QFont::Bold);
   xValue_->setFont(f);
@@ -425,7 +440,6 @@ void Smartcalc::createCreditWidgets() {
   creditTime_ = new QLabel(tr("Loan Term"));
   interestRate_ = new QLabel(tr("Interest Rate"));
   paymentType_ = new QLabel(tr("Compound"));
-  percent_ = new QLabel(tr("%"));
 
   sumLine_ = new QLineEdit();
   yearLine_ = new QLineEdit();
@@ -434,6 +448,11 @@ void Smartcalc::createCreditWidgets() {
 
   annulling_ = new QRadioButton(tr("Annually"));
   differ_ = new QRadioButton(tr("Monthly"));
+
+  outputInf_ = new QTextEdit();
+  outputInf_->setFixedHeight(200);
+
+  calculate_ = new QPushButton(tr("Calculate"));
 }
 
 void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
@@ -441,7 +460,6 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(creditTime_, 1, 0);
   layout->addWidget(interestRate_, 3, 0);
   layout->addWidget(paymentType_, 4, 0);
-  layout->addWidget(percent_, 3, 2);
 
   layout->addWidget(sumLine_, 0, 1); 
   layout->addWidget(yearLine_, 1, 1); 
@@ -450,4 +468,7 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
 
   layout->addWidget(annulling_, 4, 1); 
   layout->addWidget(differ_, 5, 1); 
+
+  layout->addWidget(outputInf_, 6, 0, 6, 2, Qt::AlignTop);
+  layout->addWidget(calculate_, 9, 0, Qt::AlignCenter);
 }

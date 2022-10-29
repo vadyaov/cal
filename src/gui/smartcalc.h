@@ -52,10 +52,13 @@ class Smartcalc : public QWidget {
 
   QRadioButton *graphButton_, *annulling_, *differ_;
 
-  QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_,
-         *percent_;
+  QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_;
 
   QLineEdit *sumLine_, *yearLine_, *monthLine_, *percentLine_;
+
+  QTextEdit *outputInf_;
+
+  QPushButton *calculate_;
 
   double result;
   info xinfo;
