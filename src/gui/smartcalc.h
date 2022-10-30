@@ -8,6 +8,7 @@
 
 extern "C" {
 #include "../calclogic/calc.h"
+#include "../calclogic/credit.h"
 }
 
 class QGridLayout;
@@ -65,6 +66,7 @@ class Smartcalc : public QWidget {
 
  private slots:
   void onButtonClicked();
+  void onDepCalcClicked();
   void createWidgets();
   void createButtons();
   void createOther();

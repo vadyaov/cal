@@ -228,6 +228,8 @@ void Smartcalc::connectWidgets() {
   connect(buttonLog_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(buttonSqrt_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(Mudro_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
+
+  connect(calculate_, SIGNAL(clicked()), this, SLOT(onDepCalcClicked()));
 }
 
 void Smartcalc::onButtonClicked() {
@@ -432,7 +434,7 @@ void Smartcalc::mudroFunction() {
   QPixmap img(imagePath);
   wiseTree_->setMaximumWidth(80);
   wiseTree_->setPixmap(img);
-  mainLayout->addWidget(wiseTree_, 12, 6);
+  mainLayout->addWidget(wiseTree_, 12, 6, 18, 6);
 }
 
 void Smartcalc::createCreditWidgets() {
@@ -450,7 +452,7 @@ void Smartcalc::createCreditWidgets() {
   differ_ = new QRadioButton(tr("Monthly"));
 
   outputInf_ = new QTextEdit();
-  outputInf_->setFixedHeight(200);
+  //outputInf_->setFixedHeight(200);
 
   calculate_ = new QPushButton(tr("Calculate"));
 }
@@ -469,6 +471,40 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(annulling_, 4, 1); 
   layout->addWidget(differ_, 5, 1); 
 
-  layout->addWidget(outputInf_, 6, 0, 6, 2, Qt::AlignTop);
-  layout->addWidget(calculate_, 9, 0, Qt::AlignCenter);
+  layout->addWidget(outputInf_, 7, 0, 7, 2, Qt::AlignTop);
+  layout->addWidget(calculate_, 9, 0);
+}
+
+void Smartcalc::onDepCalcClicked() {
+  QObject *callingCreditButton = QObject::sender();
+  creditInfo inf;
+  if (callingCreditButton == calculate_) {
+    QString sum = sumLine_->text(), year = yearLine_->text(),
+                  month = monthLine_->text(), rate = percentLine_->text();
+    outputInf_->clear();
+    if (sum.isEmpty()) {
+      outputInf_->setText("Enter the loant amount!");
+    }
+    else if (year.isEmpty() && month.isEmpty()) {
+      outputInf_->setText("Enter the loan period!");
+    }
+    else if (rate.isEmpty()) {
+      outputInf_->setText("Enter the interest rate!");
+    }
+    else {
+      initCreditInfo(&inf);
+      inf.amount = sumLine_->text().toDouble();
+      inf.time = yearLine_->text().toDouble() * 12.0 +
+                 monthLine_->text().toDouble();
+      inf.rate = percentLine_->text().toDouble();
+      if (annulling_->isChecked())
+        inf.type = 'a';
+      else if (differ_->isChecked())
+        inf.type = 'd';
+      char *out = creditCalc(&inf);
+      QString str = out;
+      outputInf_->setText(str);
+      free(out);
+    }
+  }
 }

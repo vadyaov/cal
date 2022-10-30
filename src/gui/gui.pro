@@ -22,5 +22,5 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += smartcalc.h qcustomplot.h ../calclogic/calc.h ../calclogic/polish.h ../calclogic/stack_numb.h ../calclogic/stack_symb.h
-SOURCES += main.cpp smartcalc.cpp qcustomplot.cpp ../calclogic/calc.c ../calclogic/polish.c ../calclogic/stack_numb.c ../calclogic/stack_symb.c
+HEADERS += smartcalc.h qcustomplot.h ../calclogic/calc.h ../calclogic/polish.h ../calclogic/stack_numb.h ../calclogic/stack_symb.h ../calclogic/credit.h
+SOURCES += main.cpp smartcalc.cpp qcustomplot.cpp ../calclogic/calc.c ../calclogic/polish.c ../calclogic/stack_numb.c ../calclogic/stack_symb.c ../calclogic/credit.c
