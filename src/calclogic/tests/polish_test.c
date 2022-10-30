@@ -151,7 +151,20 @@ START_TEST(polish_t12) {
   ck_assert_double_eq_tol(result, expected, 1e-7);
 }
 END_TEST
-
+/*
+START_TEST(polish_t13) {
+  info x = {0};
+  const char input[] = ".3";
+  int error = 0;
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = -(-87.543*sin(0.999+tan(55.5)-2.234))-50.66*(acos(0.234)/atan(0.55));
+  ck_assert_int_eq(error, 0);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+*/
 Suite *polishSuite() {
   Suite *polish = suite_create("[Polish Unit Test]");
   TCase *tc = tcase_create("polish");

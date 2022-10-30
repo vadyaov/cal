@@ -14,7 +14,7 @@ int is_letter(char c);
 int is_operator(char c);
 int is_operator_not_bracket(char c);
 int is_function(char c);
-char *put_in_out(const char *number_pointer, char *output, int *i);
+char *put_in_out(const char *number_pointer, char *output, int *i, int *err);
 char *space_btw(char *src, int *error);
 int fspaces(const char *src);
 int fsymbol(const char *src);

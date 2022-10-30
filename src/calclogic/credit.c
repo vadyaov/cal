@@ -17,7 +17,7 @@ char *creditCalc(creditInfo *input) {
                     (input->amount - (input->amount / input->time) * i) *
                     (input->rate / 1200.0);
       totalPayment += monthPayment;
-      if (1 == i) firstMonth = monthPayment;
+      if (0 == i) firstMonth = monthPayment;
       else if (i == input->time - 1) lastMonth = monthPayment;
     }
   }

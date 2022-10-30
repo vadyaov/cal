@@ -9,7 +9,7 @@ char *polish(const char *input, int *err) {
   if (input) {
     new_input = pretty_input(input, err);
     input_start = new_input;
-    if (new_input) {
+    if (new_input && !*err) {
       int future_spaces = fspaces(new_input),
           future_symbol = fsymbol(new_input);
       output = calloc(future_spaces + future_symbol + 1, sizeof(char));
@@ -22,7 +22,7 @@ char *polish(const char *input, int *err) {
               *output++ = a;
             else {
               int i = 0;
-              output = put_in_out(new_input, output, &i);
+              output = put_in_out(new_input, output, &i, err);
               new_input += i - 1;
             }
             *output++ = ' ';
@@ -148,7 +148,7 @@ int is_operator_not_bracket(char c) {
 
 int is_function(char c) { return (strchr("sctSCTqlg", c) ? 1 : 0); }
 
-char *put_in_out(const char *number_pointer, char *output, int *i) {
+char *put_in_out(const char *number_pointer, char *output, int *i, int *err) {
   int pointflag = 0;
   while ((is_number(*number_pointer) || *number_pointer == '.') &&
          pointflag < 2 && *number_pointer != '\0') {
@@ -158,7 +158,7 @@ char *put_in_out(const char *number_pointer, char *output, int *i) {
     output++;
     *i += 1;
   }
-  if (pointflag > 1) output = NULL;
+  if (pointflag > 1) *err = 1;;
   return output;
 }
 
@@ -168,6 +168,7 @@ char *space_btw(char *src, int *error) {
   char *buf = NULL;
   int probel = 0, replace = 0;
   for (int i = 0; src[i] != '\0' && !*error;) {
+    if (i == 0 && src[i] == '.') *error = 1;
     if (is_number(src[i])) {
       int pointflag = 0;
       while ((is_number(src[i]) || src[i] == '.') && pointflag < 2 &&
@@ -176,6 +177,7 @@ char *space_btw(char *src, int *error) {
         i++;
       }
       probel++;
+      if (pointflag > 1) *error = 1;;
     }
     if (is_letter(src[i])) {
       if (hash(src + i, &i, &replace) != '\0') {
@@ -192,6 +194,7 @@ char *space_btw(char *src, int *error) {
     }
     if (src[i] != '\0') i++;
   }
+  if (probel == 0 && length == (int)strlen(src)) *error = 1;
   if (!*error) {
     out = calloc(length + probel + 2, sizeof(char));
     buf = out;
@@ -199,7 +202,7 @@ char *space_btw(char *src, int *error) {
       int i = 0, j = 0;
       while (src[i] != '\0') {
         if (is_number(src[i])) {
-          out = put_in_out(src + i, out, &i);
+          out = put_in_out(src + i, out, &i, error);
         } else if (is_operator(src[i])) {
           *out++ = src[i];
           i++;
