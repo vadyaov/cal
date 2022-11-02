@@ -5,20 +5,17 @@
 // Constructor for main widget
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   createWidgets();
-  createCreditWidgets();
   initGraph(customPlot);
   addWidgetsToLayout(mainLayout);
   addCreditWidgetsToLayout(creditLayout);
   frame1->setLayout(mainLayout);
   frame2->setLayout(creditLayout);
+  frame3->setLayout(depositLayout);
   connectWidgets();
   customWidgets();
-  monthLine_->setPlaceholderText(QString("months"));
-  yearLine_->setPlaceholderText(QString("years"));
-  percentLine_->setPlaceholderText(QString("%"));
-  sumLine_->setPlaceholderText(QString("$"));
   calcWidget->addTab(frame1, "calc");
   calcWidget->addTab(frame2, "credit");
+  calcWidget->addTab(frame3, "deposit");
   setWindowTitle(tr("Smartcalc_v1.0"));
 }
 
@@ -71,6 +68,7 @@ Smartcalc::~Smartcalc() {
   delete wiseTree_;
   delete mainLayout;
   delete creditLayout;
+  delete depositLayout;
   delete annulling_;
   delete differ_;
   delete creditSum_;
@@ -83,17 +81,21 @@ Smartcalc::~Smartcalc() {
   delete percentLine_;
   delete frame1;
   delete frame2;
+  delete frame3;
   delete calcWidget;
 }
 
 void Smartcalc::createWidgets() {
   frame1 = new QFrame(this);
   frame2 = new QFrame(this);
+  frame3 = new QFrame(this);
   mainLayout = new QGridLayout(frame1);
   creditLayout = new QGridLayout(frame2);
+  depositLayout = new QGridLayout(frame3);
   calcWidget = new QTabWidget(this);
   createButtons();
   createOther();
+  createCreditWidgets();
 }
 
 void Smartcalc::createButtons() {
@@ -426,13 +428,18 @@ void Smartcalc::customWidgets() {
   button9_->setStyleSheet("color: black; background-color: grey;");
   buttonPoint_->setStyleSheet("color: black; background-color: grey;");
   buttonBspc_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
-  wiseTree_->setStyleSheet("background-color: blue;");
+
+  monthLine_->setPlaceholderText(QString("months"));
+  yearLine_->setPlaceholderText(QString("years"));
+  percentLine_->setPlaceholderText(QString("%"));
+  sumLine_->setPlaceholderText(QString("$"));
 }
 
 void Smartcalc::mudroFunction() {
   QString imagePath = "index.png";
   QPixmap img(imagePath);
   wiseTree_->setMaximumWidth(80);
+  img = img.scaledToWidth(75);
   wiseTree_->setPixmap(img);
   mainLayout->addWidget(wiseTree_, 12, 6, 18, 6);
 }
@@ -472,7 +479,11 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(differ_, 5, 1); 
 
   layout->addWidget(outputInf_, 7, 0, 7, 2, Qt::AlignTop);
-  layout->addWidget(calculate_, 9, 0);
+  #if defined (__APPLE__) && defined(__MACH__)
+    layout->addWidget(calculate_, 9, 0);
+  #else
+    layout->addWidget(calculate_, 10, 0);
+  #endif
 }
 
 void Smartcalc::onDepCalcClicked() {

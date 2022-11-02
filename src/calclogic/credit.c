@@ -6,7 +6,7 @@ char *creditCalc(creditInfo *input) {
   int mlen = 0, tlen = 0, olen = 0;
   char *output = NULL;
   char month[512] = {'\0'}, total[256] = {'\0'}, overp[256] = {'\0'};
-  printCreditStruct(input);
+  // printCreditStruct(input);
   if (input->type == 'a') {
     monthPayment = (input->amount * input->rate / 1200.0) /
                    (1 - pow(1 + input->rate / 1200.0, -input->time));
@@ -25,15 +25,14 @@ char *creditCalc(creditInfo *input) {
   if (input->type == 'a')
     mlen = sprintf(month, "Month Payment: %.2lf\n", monthPayment);
   else
-    mlen = sprintf(month, "Month Payment:\n\t from: %.2lf\n\t   to: %.2lf\n",
+    mlen = sprintf(month, "Month Payment:\n\t from: %.2lf\n\t   to:    %.2lf\n",
                        firstMonth, lastMonth);
   tlen = sprintf(total, "Total Payment: %.2lf\n", totalPayment),
-  olen = sprintf(overp, "Overpayment  : %.2lf\n", overPayment);
+  olen = sprintf(overp, "Overpayment : %.2lf\n", overPayment);
   output = calloc(mlen + tlen + olen + 1, sizeof(char));
   strcpy(output, month);
   strcat(output, total);
   strcat(output, overp);
-  printf("%s\n", output);
   return output;
 }
 

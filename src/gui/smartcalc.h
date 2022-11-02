@@ -27,11 +27,16 @@ class Smartcalc : public QWidget {
   Q_OBJECT
 
  public:
-  Smartcalc(QWidget *parent = 0);  // Constructor
-  ~Smartcalc();                    // Destructor
+  Smartcalc(QWidget *parent = 0);
+  ~Smartcalc();
 
  private:
-  QGridLayout *mainLayout, *creditLayout;
+  QTabWidget *calcWidget;
+  QFrame *frame1, *frame2, *frame3;
+  QGridLayout *mainLayout, *creditLayout, *depositLayout;
+
+  /* MainCalc Widgets */
+
   QPushButton *button0_, *button1_, *button2_, *button3_, *button4_, *button5_,
       *button6_, *button7_, *button8_, *button9_, *buttonBspc_, *buttonAc_,
       *buttonX_, *buttonPoint_, *buttonLbracket_, *buttonRbracket_, *buttonDiv_,
@@ -47,11 +52,14 @@ class Smartcalc : public QWidget {
 
   QCustomPlot *customPlot;
 
-  QTabWidget *calcWidget;
+  QRadioButton *graphButton_;
 
-  QFrame *frame1, *frame2;
+  double result;
+  info xinfo;
 
-  QRadioButton *graphButton_, *annulling_, *differ_;
+  /* CreditCalc Widgets */
+
+  QRadioButton *annulling_, *differ_;
 
   QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_;
 
@@ -61,8 +69,7 @@ class Smartcalc : public QWidget {
 
   QPushButton *calculate_;
 
-  double result;
-  info xinfo;
+  /* DepositCalc Widgets */
 
  private slots:
   void onButtonClicked();
