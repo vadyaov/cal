@@ -71,6 +71,16 @@ class Smartcalc : public QWidget {
 
   /* DepositCalc Widgets */
 
+  QLabel *depositSum_, *depositTime_, *depInterestRate_, *depTaxRate_,
+         *payFrequency_, *addToDep_;
+
+  QLineEdit *depSumLine_, *depYearLine_, *depMonthLine_, *depPercentLine_,
+            *depTaxRateLine_;
+
+  QRadioButton *capitalization_;
+
+  QComboBox *payFreq_, *addDep_;
+
  private slots:
   void onButtonClicked();
   void onDepCalcClicked();
@@ -89,6 +99,8 @@ class Smartcalc : public QWidget {
   void createCreditWidgets();
   void addCreditWidgetsToLayout(QGridLayout *layout);
 
+  void createDepositWidgets();
+  void addDepositWidgetsToLayout(QGridLayout *layout);
 };
 
 #endif  // SMARTCALC_H

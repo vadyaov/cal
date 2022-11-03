@@ -8,6 +8,7 @@ Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   initGraph(customPlot);
   addWidgetsToLayout(mainLayout);
   addCreditWidgetsToLayout(creditLayout);
+  addDepositWidgetsToLayout(depositLayout);
   frame1->setLayout(mainLayout);
   frame2->setLayout(creditLayout);
   frame3->setLayout(depositLayout);
@@ -79,6 +80,23 @@ Smartcalc::~Smartcalc() {
   delete yearLine_;
   delete monthLine_;
   delete percentLine_;
+
+  delete depositSum_;
+  delete depositTime_;
+  delete depInterestRate_;
+  delete depTaxRate_;
+  delete payFrequency_;
+  delete addToDep_;
+  delete depSumLine_;
+  delete depYearLine_;
+  delete depMonthLine_;
+  delete depPercentLine_;
+  delete depTaxRateLine_;
+  
+  delete capitalization_;
+  delete payFreq_;
+  delete addDep_;
+
   delete frame1;
   delete frame2;
   delete frame3;
@@ -96,6 +114,7 @@ void Smartcalc::createWidgets() {
   createButtons();
   createOther();
   createCreditWidgets();
+  createDepositWidgets();
 }
 
 void Smartcalc::createButtons() {
@@ -433,6 +452,12 @@ void Smartcalc::customWidgets() {
   yearLine_->setPlaceholderText(QString("years"));
   percentLine_->setPlaceholderText(QString("%"));
   sumLine_->setPlaceholderText(QString("$"));
+
+  depMonthLine_->setPlaceholderText(QString("months"));
+  depYearLine_->setPlaceholderText(QString("years"));
+  depPercentLine_->setPlaceholderText(QString("%"));
+  depTaxRateLine_->setPlaceholderText(QString("%"));
+  depSumLine_->setPlaceholderText(QString("$"));
 }
 
 void Smartcalc::mudroFunction() {
@@ -518,4 +543,57 @@ void Smartcalc::onDepCalcClicked() {
       free(out);
     }
   }
+}
+
+void Smartcalc::createDepositWidgets() {
+  depositSum_ = new QLabel(tr("Deposit Amount"));
+  depositTime_ = new QLabel(tr("Deposit Term"));
+  depInterestRate_ = new QLabel(tr("Inerest Rate"));
+  depTaxRate_ = new QLabel(tr("Tax Rate"));
+  payFrequency_ = new QLabel(tr("Frequency of Payments"));
+  addToDep_ = new QLabel(tr("Depo Replanishment"));
+
+  depSumLine_ = new QLineEdit();
+  depYearLine_ = new QLineEdit();
+  depMonthLine_ = new QLineEdit();
+  depPercentLine_ = new QLineEdit();
+  depTaxRateLine_ = new QLineEdit();
+
+  payFreq_ = new QComboBox();
+  addDep_ = new QComboBox();
+  capitalization_ = new QRadioButton(tr("Capitalization"));
+}
+
+void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
+  layout->addWidget(depositSum_, 0, 0);
+  layout->addWidget(depositTime_, 1, 0);
+  layout->addWidget(depInterestRate_, 3, 0);
+  layout->addWidget(depTaxRate_, 4, 0);
+  layout->addWidget(payFrequency_, 5, 0);
+  layout->addWidget(addToDep_, 7, 0);
+
+  layout->addWidget(depSumLine_, 0, 1);
+  layout->addWidget(depYearLine_, 1, 1);
+  layout->addWidget(depMonthLine_, 2, 1);
+  layout->addWidget(depPercentLine_, 3, 1);
+  layout->addWidget(depTaxRateLine_, 4, 1);
+  layout->addWidget(payFreq_, 5, 1);
+  layout->addWidget(addDep_, 7, 1);
+
+  payFreq_->addItem("every day");
+  payFreq_->addItem("every week");
+  payFreq_->addItem("every month");
+  payFreq_->addItem("every quarter");
+  payFreq_->addItem("every six month");
+  payFreq_->addItem("every year");
+
+  addDep_->addItem("no replanishment");
+  addDep_->addItem("every month");
+  addDep_->addItem("every 2 months");
+  addDep_->addItem("every quarter");
+  addDep_->addItem("every 4 months");
+  addDep_->addItem("every six month");
+  addDep_->addItem("every year");
+
+  layout->addWidget(capitalization_, 6, 1);
 }
