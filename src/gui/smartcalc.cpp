@@ -87,15 +87,23 @@ Smartcalc::~Smartcalc() {
   delete depTaxRate_;
   delete payFrequency_;
   delete addToDep_;
+  delete addSum_;
+  delete removeFromDep_;
+  delete removeSum_;
   delete depSumLine_;
   delete depYearLine_;
   delete depMonthLine_;
   delete depPercentLine_;
   delete depTaxRateLine_;
+  delete addSumLine_;
+  delete removeSumLine_;
   
   delete capitalization_;
   delete payFreq_;
   delete addDep_;
+  delete removeDep_;
+  delete startDay_;
+  delete calcDep_;
 
   delete frame1;
   delete frame2;
@@ -458,6 +466,9 @@ void Smartcalc::customWidgets() {
   depPercentLine_->setPlaceholderText(QString("%"));
   depTaxRateLine_->setPlaceholderText(QString("%"));
   depSumLine_->setPlaceholderText(QString("$"));
+  
+  addSumLine_->setPlaceholderText(QString("$"));
+  removeSumLine_->setPlaceholderText(QString("$"));
 }
 
 void Smartcalc::mudroFunction() {
@@ -552,16 +563,34 @@ void Smartcalc::createDepositWidgets() {
   depTaxRate_ = new QLabel(tr("Tax Rate"));
   payFrequency_ = new QLabel(tr("Frequency of Payments"));
   addToDep_ = new QLabel(tr("Depo Replanishment"));
+  addSum_ = new QLabel(tr("Replanish Amount"));
+  removeFromDep_ = new QLabel(tr("Partial Withdrawals"));
+  removeSum_ = new QLabel(tr("Remove Amount"));
+  outDepInf_ = new QTextEdit();
 
   depSumLine_ = new QLineEdit();
   depYearLine_ = new QLineEdit();
   depMonthLine_ = new QLineEdit();
   depPercentLine_ = new QLineEdit();
   depTaxRateLine_ = new QLineEdit();
+  addSumLine_ = new QLineEdit();
+  removeSumLine_ = new QLineEdit();
+
+  calcDep_ = new QPushButton(tr("Calculate"));
 
   payFreq_ = new QComboBox();
   addDep_ = new QComboBox();
+  removeDep_ = new QComboBox();
   capitalization_ = new QRadioButton(tr("Capitalization"));
+
+  QDate thisDay = QDate::currentDate();
+  startDay_ = new QDateEdit();
+  endDay_ = new QDateEdit();
+  QString displayForm_ = "dd.MM.yyyy";
+  startDay_->setDate(thisDay);
+  startDay_->setDisplayFormat(displayForm_);
+  endDay_->setDate(thisDay);
+  endDay_->setDisplayFormat(displayForm_);
 }
 
 void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
@@ -571,14 +600,28 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(depTaxRate_, 4, 0);
   layout->addWidget(payFrequency_, 5, 0);
   layout->addWidget(addToDep_, 7, 0);
+  layout->addWidget(addSum_, 8, 0);
+  layout->addWidget(removeFromDep_, 9, 0);
+  layout->addWidget(removeSum_, 10, 0);
 
   layout->addWidget(depSumLine_, 0, 1);
-  layout->addWidget(depYearLine_, 1, 1);
-  layout->addWidget(depMonthLine_, 2, 1);
+  //layout->addWidget(depYearLine_, 1, 1);
+  //layout->addWidget(depMonthLine_, 2, 1);
   layout->addWidget(depPercentLine_, 3, 1);
   layout->addWidget(depTaxRateLine_, 4, 1);
   layout->addWidget(payFreq_, 5, 1);
   layout->addWidget(addDep_, 7, 1);
+  layout->addWidget(addSumLine_, 8, 1);
+  layout->addWidget(removeDep_, 9, 1);
+  layout->addWidget(removeSumLine_, 10, 1);
+
+  layout->addWidget(capitalization_, 6, 1);
+
+  layout->addWidget(outDepInf_, 12, 0, 12, 2, Qt::AlignTop);
+  layout->addWidget(calcDep_, 11, 0);
+
+  layout->addWidget(startDay_, 1, 1);
+  layout->addWidget(endDay_, 1, 2);
 
   payFreq_->addItem("every day");
   payFreq_->addItem("every week");
@@ -595,5 +638,12 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   addDep_->addItem("every six month");
   addDep_->addItem("every year");
 
-  layout->addWidget(capitalization_, 6, 1);
+  removeDep_->addItem("no withdrawals");
+  removeDep_->addItem("every month");
+  removeDep_->addItem("every 2 months");
+  removeDep_->addItem("every quarter");
+  removeDep_->addItem("every 4 months");
+  removeDep_->addItem("every six month");
+  removeDep_->addItem("every year");
+
 }

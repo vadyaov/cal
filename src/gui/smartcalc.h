@@ -3,6 +3,8 @@
 
 #include <QPainterPath>
 #include <QWidget>
+#include <QDate>
+#include <QDateEdit>
 
 #include "qcustomplot.h"
 
@@ -22,6 +24,8 @@ class QCustomPlot;
 class QStyle;
 class QPixmap;
 class QTabWidget;
+class QDate;
+class QDateEdit;
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -72,14 +76,20 @@ class Smartcalc : public QWidget {
   /* DepositCalc Widgets */
 
   QLabel *depositSum_, *depositTime_, *depInterestRate_, *depTaxRate_,
-         *payFrequency_, *addToDep_;
+         *payFrequency_, *addToDep_, *addSum_, *removeFromDep_, *removeSum_;
 
   QLineEdit *depSumLine_, *depYearLine_, *depMonthLine_, *depPercentLine_,
-            *depTaxRateLine_;
+            *depTaxRateLine_, *addSumLine_, *removeSumLine_;
+
+  QTextEdit *outDepInf_;
 
   QRadioButton *capitalization_;
 
-  QComboBox *payFreq_, *addDep_;
+  QComboBox *payFreq_, *addDep_, *removeDep_;
+
+  QPushButton *calcDep_;
+
+  QDateEdit *startDay_, *endDay_;
 
  private slots:
   void onButtonClicked();
