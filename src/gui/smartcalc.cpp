@@ -586,7 +586,7 @@ void Smartcalc::createDepositWidgets() {
   QString displayForm_ = "dd.MM.yyyy";
   startDay_->setDate(thisDay);
   startDay_->setDisplayFormat(displayForm_);
-  endDay_->setDate(thisDay);
+  endDay_->setMinimumDate(thisDay);
   endDay_->setDisplayFormat(displayForm_);
 }
 
@@ -610,7 +610,7 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(removeDep_, 9, 1);
   layout->addWidget(removeSumLine_, 10, 1);
 
-  layout->addWidget(capitalization_, 6, 1);
+  layout->addWidget(capitalization_, 6, 0);
 
   layout->addWidget(outDepInf_, 12, 0, 12, 2, Qt::AlignTop);
   layout->addWidget(calcDep_, 11, 0);
@@ -627,23 +627,23 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   payFreq_->addItem("every week");
   payFreq_->addItem("every month");
   payFreq_->addItem("every quarter");
-  payFreq_->addItem("every six month");
+  payFreq_->addItem("every 6 month");
   payFreq_->addItem("every year");
 
   addDep_->addItem("no replanishment");
   addDep_->addItem("every month");
-  addDep_->addItem("every 2 months");
+  addDep_->addItem("every 2 month");
   addDep_->addItem("every quarter");
-  addDep_->addItem("every 4 months");
-  addDep_->addItem("every six month");
+  addDep_->addItem("every 4 month");
+  addDep_->addItem("every 6 month");
   addDep_->addItem("every year");
 
   removeDep_->addItem("no withdrawals");
   removeDep_->addItem("every month");
-  removeDep_->addItem("every 2 months");
+  removeDep_->addItem("every 2 month");
   removeDep_->addItem("every quarter");
-  removeDep_->addItem("every 4 months");
-  removeDep_->addItem("every six month");
+  removeDep_->addItem("every 4 month");
+  removeDep_->addItem("every 6 month");
   removeDep_->addItem("every year");
 
 }
