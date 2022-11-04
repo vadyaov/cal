@@ -91,6 +91,8 @@ class Smartcalc : public QWidget {
 
   QDateEdit *startDay_, *endDay_;
 
+  QHBoxLayout *dateLayout_;
+
  private slots:
   void onButtonClicked();
   void onDepCalcClicked();
