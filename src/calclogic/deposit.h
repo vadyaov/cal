@@ -22,5 +22,11 @@ int toNumber(char *p, int n);
 size_t yulian(int day, int month, int year);
 char chooseFrequency(char *str);
 
-void everyDayCap(deposit *depo, double *per, double *all, double *tax);
-void (*selectAction(deposit *dep))(deposit *, double *, double *, double *);
+void everyDayCap(deposit *depo, double *all);
+void everyWeekCap(deposit *depo, double *all);
+void everyMonthCap(deposit *depo,double *all);
+void everyQuarterCap(deposit *depo, double *all);
+void everyHalfYearCap(deposit *depo, double *all);
+void everyYearCap(deposit *depo, double *all);
+
+void (*selectAction(char a))(deposit *, double *);
