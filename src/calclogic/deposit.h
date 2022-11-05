@@ -17,16 +17,14 @@ const char addRemFreq[] = {'1', '2', 'q', '4', '6', 'y', '\0'};
 
 char *depcalc(deposit *depo);
 void initDeposit(deposit *depo);
-size_t days(char *startDate, char *endDate);
-int toNumber(char *p, int n);
+size_t days(const char *startDate, const char *endDate);
+int toNumber(const char *p, int n);
 size_t yulian(int day, int month, int year);
-char chooseFrequency(char *str);
+char chooseFrequency(const char *str);
+double capCount(deposit *depo, double a, double b);
+double capital(deposit *depo);
 
-void everyDayCap(deposit *depo, double *all);
-void everyWeekCap(deposit *depo, double *all);
-void everyMonthCap(deposit *depo,double *all);
-void everyQuarterCap(deposit *depo, double *all);
-void everyHalfYearCap(deposit *depo, double *all);
-void everyYearCap(deposit *depo, double *all);
+int countPayments(char s, double days);
+int countCapitals(char c, double days);
 
-void (*selectAction(char a))(deposit *, double *);
+void printDepo(deposit dep);

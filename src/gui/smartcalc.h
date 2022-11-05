@@ -11,6 +11,7 @@
 extern "C" {
 #include "../calclogic/calc.h"
 #include "../calclogic/credit.h"
+#include "../calclogic/deposit.h"
 }
 
 class QGridLayout;
@@ -78,8 +79,8 @@ class Smartcalc : public QWidget {
   QLabel *depositSum_, *depositTime_, *depInterestRate_, *depTaxRate_,
          *payFrequency_, *addToDep_, *addSum_, *removeFromDep_, *removeSum_;
 
-  QLineEdit *depSumLine_, *depYearLine_, *depMonthLine_, *depPercentLine_,
-            *depTaxRateLine_, *addSumLine_, *removeSumLine_;
+  QLineEdit *depSumLine_, *depPercentLine_, *depTaxRateLine_, *addSumLine_,
+            *removeSumLine_;
 
   QTextEdit *outDepInf_;
 
@@ -95,7 +96,8 @@ class Smartcalc : public QWidget {
 
  private slots:
   void onButtonClicked();
-  void onDepCalcClicked();
+  void onCreditCalcClicked();
+  void onDepositCalcClicked();
   void createWidgets();
   void createButtons();
   void createOther();

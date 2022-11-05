@@ -258,7 +258,8 @@ void Smartcalc::connectWidgets() {
   connect(buttonSqrt_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(Mudro_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
 
-  connect(calculate_, SIGNAL(clicked()), this, SLOT(onDepCalcClicked()));
+  connect(calculate_, SIGNAL(clicked()), this, SLOT(onCreditCalcClicked()));
+  connect(calcDep_, SIGNAL(clicked()), this, SLOT(onDepositCalcClicked()));
 }
 
 void Smartcalc::onButtonClicked() {
@@ -519,7 +520,7 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   #endif
 }
 
-void Smartcalc::onDepCalcClicked() {
+void Smartcalc::onCreditCalcClicked() {
   QObject *callingCreditButton = QObject::sender();
   creditInfo inf;
   if (callingCreditButton == calculate_) {
@@ -550,6 +551,46 @@ void Smartcalc::onDepCalcClicked() {
       outputInf_->setText(str);
       free(out);
     }
+  }
+}
+
+void Smartcalc::onDepositCalcClicked() {
+  QObject *callingDepositButton = QObject::sender();
+  deposit depo;
+  initDeposit(&depo);
+  if (callingDepositButton == calcDep_) {
+    
+    depo.depSum = depSumLine_->text().toDouble();
+    QString start = startDay_->text();
+    QString end = endDay_->text();
+    QString freq = payFreq_->currentText();
+    QString repl = addDep_->currentText();
+    QString remv = removeDep_->currentText();
+    QByteArray st = start.toLocal8Bit();
+    QByteArray en = end.toLocal8Bit();
+    QByteArray fr = freq.toLocal8Bit();
+    QByteArray re = repl.toLocal8Bit();
+    QByteArray rm = remv.toLocal8Bit();
+    const char *strt = st.data();
+    const char *endd = en.data();
+    const char *ffrr = fr.data();
+    const char *repp = re.data();
+    const char *remm = rm.data();
+    depo.depTerm = days(strt, endd);
+    depo.intRate = depPercentLine_->text().toDouble();
+    depo.taxRate = depTaxRateLine_->text().toDouble();
+    depo.frequency = chooseFrequency(ffrr);
+    depo.replanishment = chooseFrequency(repp);
+    depo.withdrawals = chooseFrequency(remm);
+    depo.repSum = addSumLine_->text().toDouble();
+    depo.remSum = removeSumLine_->text().toDouble();
+    depo.cap = capitalization_->isChecked() ? true : false;
+    printDepo(depo);
+    
+    char *out = depcalc(&depo);
+    QString output = out;
+    outDepInf_->setText(output);
+    free(out);
   }
 }
 
@@ -645,5 +686,4 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   removeDep_->addItem("every 4 month");
   removeDep_->addItem("every 6 month");
   removeDep_->addItem("every year");
-
 }
