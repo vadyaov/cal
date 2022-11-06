@@ -3,30 +3,40 @@
 char *depcalc(deposit *depo) {
   double per = 0.0, tax = 0.0, all = 0.0;
   char *res;
+  char r = depo->replanishment, c = depo->frequency, m = depo->withdrawals;
   if (depo->cap) {
     all = capital(depo);
     per = all - depo->depSum;
   } else {
-    if (depo->replanishment || depo->withdrawals) {
-      char r = depo->replanishment;
-      char c = depo->frequency;
-      char m = depo->withdrawals;
+      int paymInPer = countPayments(r, depo->depTerm);
+      int captInPer = countCapitals(c, depo->depTerm);
+      int remInPer = countPayments(m, depo->depTerm);
+      double newPeriod = paymInPer ? round(depo->depTerm / paymInPer) : 0;
+      double remPeriod = remInPer ? round(depo->depTerm / remInPer) : 0;
       printf("payment frequency = %c\n", c);
       printf("adding to deposit = %c\n", r);
       printf("remove from depos = %c\n", m);
-      int paymInPer = countPayments(r, depo->depTerm);
-      int captInPer = countCapitals(c, depo->depTerm);
       printf("number of addings: %d\n", paymInPer);
+      printf("number of removes: %d\n", remInPer);
       printf("number of capital: %d\n", captInPer);
-      per += (depo->depSum * depo->intRate * depo->depTerm) / 36500.0;
-    } else {
-      all = depo->depSum;
-      per = (depo->depSum * depo->intRate * depo->depTerm) / 36500.0;
-    }
+      printf("1 period of ADD= %lf\n", newPeriod);
+      printf("1 period of REM= %lf\n", remPeriod);
+      int i = 0;
+      for (int j = 1, k = 1; i < (int)depo->depTerm; i++) {
+        per += round(depo->depSum * depo->intRate / 36500.0);
+        if (i >= ((int)newPeriod - 1) * j) {
+          depo->depSum += depo->repSum;
+          j++;
+        }
+        if (i >= ((int)remPeriod - 1) * k) {
+          depo->depSum -= depo->remSum;
+          k++;
+        }
+      }
+    all = depo->depSum;
   }
   tax = per * depo->taxRate / 100.0;
-  asprintf(&res, "percents:%lf\nall:%lf\ntax:%lf\n", per, all, tax);
-  printf("strlen = %zu\n", strlen(res));
+  asprintf(&res, "percents:%.2lf\nall:%.2lf\ntax:%.2lf\n", per, all, tax);
   return res;
 }
 
@@ -100,7 +110,7 @@ double capital(deposit *depo) {
 
 int countPayments(char s, double days) {
   int res = 0;
-  double months = days / 30.417;
+  double months = floor(days / 30.417);
   int m = (int)(months);
   if (s == '1') res = m;
   else if (s == '2') res = m / 2;
