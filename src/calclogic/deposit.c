@@ -4,31 +4,37 @@ char *depcalc(deposit *depo) {
   double per = 0.0, tax = 0.0, all = 0.0;
   char *res;
   char r = depo->replanishment, c = depo->frequency, m = depo->withdrawals;
-  if (depo->cap) {
-    all = capital(depo);
-    per = all - depo->depSum;
-  } else {
-      int paymInPer = countPayments(r, depo->depTerm);
-      int captInPer = countCapitals(c, depo->depTerm);
-      int remInPer = countPayments(m, depo->depTerm);
-      double newPeriod = paymInPer ? round(depo->depTerm / paymInPer) : 0;
-      double remPeriod = remInPer ? round(depo->depTerm / remInPer) : 0;
-      printf("payment frequency = %c\n", c);
-      printf("adding to deposit = %c\n", r);
-      printf("remove from depos = %c\n", m);
+  int paymInPer = 0, captInPer = 0, remInPer = 0;
+  addrem ar = {0};
+  if (depo->replanishment || depo->withdrawals) {
+    paymInPer = countPayments(r, depo->depTerm);
+    captInPer = countCapitals(c, depo->depTerm);
+    remInPer = countPayments(m, depo->depTerm);
+    ar.repPeriod = paymInPer ? (depo->depTerm / paymInPer) : 0;
+    ar.remPeriod = remInPer ? (depo->depTerm / remInPer) : 0;
+    ar.capPeriod = captInPer ? (depo->depTerm / captInPer) : 0;
+  }
       printf("number of addings: %d\n", paymInPer);
       printf("number of removes: %d\n", remInPer);
       printf("number of capital: %d\n", captInPer);
-      printf("1 period of ADD= %lf\n", newPeriod);
-      printf("1 period of REM= %lf\n", remPeriod);
-      int i = 0;
-      for (int j = 1, k = 1; i < (int)depo->depTerm; i++) {
+      printf("1 period of ADD= %lf\n", ar.repPeriod);
+      printf("1 period of REM= %lf\n", ar.remPeriod);
+      printf("1 period of CAP= %lf\n", ar.capPeriod);
+      
+  if (depo->cap) {
+    double sum = depo->depSum;
+    all = capital(depo, &ar);
+    if (!depo->replanishment && !depo->withdrawals)
+      per = all - depo->depSum;
+    else per = depo->depSum - sum - (paymInPer  + 1) * depo->repSum;
+  } else {
+      for (int i = 0, j = 1, k = 1; i < (int)depo->depTerm; i++) {
         per += round(depo->depSum * depo->intRate / 36500.0);
-        if (i >= ((int)newPeriod - 1) * j) {
+        if (depo->replanishment && i >= ((int)ar.repPeriod - 1) * j) {
           depo->depSum += depo->repSum;
           j++;
         }
-        if (i >= ((int)remPeriod - 1) * k) {
+        if (depo->withdrawals && i >= ((int)ar.remPeriod - 1) * k) {
           depo->depSum -= depo->remSum;
           k++;
         }
@@ -36,7 +42,7 @@ char *depcalc(deposit *depo) {
     all = depo->depSum;
   }
   tax = per * depo->taxRate / 100.0;
-  asprintf(&res, "percents:%.2lf\nall:%.2lf\ntax:%.2lf\n", per, all, tax);
+  asprintf(&res, "Percents: %.2lf\nDeposit:  %.2lf\nYourTax:  %.2lf\n", per, all, tax);
   return res;
 }
 
@@ -96,16 +102,44 @@ double capCount(deposit *depo, double a, double b) {
   return depo->depSum * pow(1.0 + depo->intRate / a, depo->depTerm / b);
 }
 
-double capital(deposit *depo) {
-  char a = depo->frequency;
+void _capCount_(deposit *depo, addrem *a) {
+  double p = 0.0;
+  for (int i = 0, j = 1, k = 1, z = 1; i < depo->depTerm; i++) {
+    p += depo->depSum * depo->intRate / 36500.0;
+    if (i >= (a->capPeriod - 1) * z) {
+      depo->depSum += p;
+      z++;
+      p = 0.0;
+    }
+    if (depo->replanishment && i >= (int)(a->repPeriod - 1) * j) {
+      depo->depSum += depo->repSum;
+      j++;
+    }
+    if (depo->withdrawals && i >= (int)(a->remPeriod - 1) * k) {
+      depo->depSum -= depo->remSum;
+      k++;
+    }
+  }
+  depo->depSum += p;
+}
+
+double capital(deposit *depo, addrem *a) {
+  double result = 0.0;
+  char c = depo->frequency;
   double A = 0.0, B = 0.0;
-  if (a == 'd') A = 36500, B = 1;
-  else if (a == 'w') A = 5214.29, B = 7;
-  else if (a == '1') A = 1200, B = 30.5;
-  else if (a == 'q') A = 400, B = 91.35;
-  else if (a == '6') A = 200, B = 182.5;
-  else if (a == 'y') A = 100, B = 365;
-  return capCount(depo, A, B);
+  if (c == 'd') A = 36500, B = 1;
+  else if (c == 'w') A = 5214.29, B = 7;
+  else if (c == '1') A = 1200, B = 30.5;
+  else if (c == 'q') A = 400, B = 91.35;
+  else if (c == '6') A = 200, B = 182.5;
+  else if (c == 'y') A = 100, B = 365;
+  if (depo->replanishment || depo->withdrawals) {
+    _capCount_(depo, a);
+    result = depo->depSum;
+  } else {
+    result = capCount(depo, A, B);
+  }
+  return result;
 }
 
 int countPayments(char s, double days) {
@@ -118,6 +152,7 @@ int countPayments(char s, double days) {
   else if (s == '4') res = m / 4;
   else if (s == '6') res = m / 6;
   else if (s == 'y') res = m / 12;
+  res -= 1;
   return res;
 }
 

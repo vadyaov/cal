@@ -8,6 +8,10 @@ typedef struct depInfo {
   char frequency, replanishment, withdrawals;
   bool cap;
 } deposit;
+
+typedef struct AddRemoveInfo {
+  double capPeriod, repPeriod, remPeriod;
+} addrem;
           // every
           //            day  week mont quart y/2 year
 const char payFreq[] = {'d', 'w', '1', 'q', '6', 'y', '\0'};
@@ -22,7 +26,8 @@ int toNumber(const char *p, int n);
 size_t yulian(int day, int month, int year);
 char chooseFrequency(const char *str);
 double capCount(deposit *depo, double a, double b);
-double capital(deposit *depo);
+void _capCount_(deposit *depo, addrem *a);
+double capital(deposit *depo, addrem *a);
 
 int countPayments(char s, double days);
 int countCapitals(char c, double days);
