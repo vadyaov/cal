@@ -32,7 +32,7 @@ GCDA := $(shell find ./tests/objects -maxdepth 1 -name "*.gcda")
 GCNO := $(shell find ./tests/objects -maxdepth 1 -name "*.gcno")
 
 all: $(calclib) test #gcov_report
-
+	echo $(SRC_OBJS)
 $(calclib): $(SRC_OBJS) $(SRC_INC)
 	ar rc $@ $(SRC_OBJS)
 	ranlib $@
@@ -53,7 +53,7 @@ test: $(calclib) $(TEST_OBJS) $(TEST_MAIN_OBJ) $(TEST_INC)
 	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) -o tests/test $(TST_LIBS) -L. $(calclib) #-fsanitize=address -g
 	./tests/test
 
-$(TEST_OBJS): ./tests/objects%.o: ./tests/%.c $(TEST_INC)
+$(TEST_OBJS): ./tests/objects%.o: ./tests%.c $(TEST_INC)
 	@mkdir -p ./tests/objects
 	$(CC) $(TEST_FLAGS) -o $@ -c $<
 

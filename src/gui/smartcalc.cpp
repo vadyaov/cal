@@ -96,7 +96,7 @@ Smartcalc::~Smartcalc() {
   delete depTaxRateLine_;
   delete addSumLine_;
   delete removeSumLine_;
-  
+
   delete capitalization_;
   delete payFreq_;
   delete addDep_;
@@ -399,7 +399,7 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
       y[i] = std::numeric_limits<double>::infinity();
     else if (y[i] < -1000000.0)
       y[i] = -std::numeric_limits<double>::infinity();
-    //printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
+    // printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
     xinfo.x += step;
     if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
     if (xinfo.err) {
@@ -432,17 +432,21 @@ void Smartcalc::customWidgets() {
   stepLine_->setAlignment(Qt::AlignCenter);
   lineEditMain_->setAlignment(Qt::AlignRight);
   lineEditMain_->setProperty("mandatoryField", true);
-  lineEditMain_->setStyleSheet("color: black;"
-                         "background-color: white;"
-                         "selection-background-color: grey;");
-  lineEditX_->setStyleSheet("color: black;"
-                         "background-color: lightgrey;");
+  lineEditMain_->setStyleSheet(
+      "color: black;"
+      "background-color: white;"
+      "selection-background-color: grey;");
+  lineEditX_->setStyleSheet(
+      "color: black;"
+      "background-color: lightgrey;");
   QFont fontX = {"Arial", 12, QFont::Bold};
   buttonX_->setFont(fontX);
-  leftBorderLine_->setStyleSheet("color: blue;"
-                         "background-color: lightgrey;");
-  rightBorderLine_->setStyleSheet("color: blue;"
-                         "background-color: lightgrey;");
+  leftBorderLine_->setStyleSheet(
+      "color: blue;"
+      "background-color: lightgrey;");
+  rightBorderLine_->setStyleSheet(
+      "color: blue;"
+      "background-color: lightgrey;");
   buttonEqual_->setStyleSheet("color: black; background-color: lightBlue;");
   button0_->setStyleSheet("color: black; background-color: grey;");
   button1_->setStyleSheet("color: black; background-color: grey;");
@@ -465,7 +469,7 @@ void Smartcalc::customWidgets() {
   depPercentLine_->setPlaceholderText(QString("%"));
   depTaxRateLine_->setPlaceholderText(QString("%"));
   depSumLine_->setPlaceholderText(QString("$"));
-  
+
   addSumLine_->setPlaceholderText(QString("$"));
   removeSumLine_->setPlaceholderText(QString("$"));
 }
@@ -504,20 +508,18 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(interestRate_, 3, 0);
   layout->addWidget(paymentType_, 4, 0);
 
-  layout->addWidget(sumLine_, 0, 1); 
-  layout->addWidget(yearLine_, 1, 1); 
-  layout->addWidget(monthLine_, 2, 1); 
-  layout->addWidget(percentLine_, 3, 1); 
+  layout->addWidget(sumLine_, 0, 1);
+  layout->addWidget(yearLine_, 1, 1);
+  layout->addWidget(monthLine_, 2, 1);
+  layout->addWidget(percentLine_, 3, 1);
 
-  layout->addWidget(annulling_, 4, 1); 
-  layout->addWidget(differ_, 5, 1); 
+  layout->addWidget(annulling_, 4, 1);
+  layout->addWidget(differ_, 5, 1);
 
-  layout->addWidget(outputInf_, 7, 0, 7, 2, Qt::AlignTop);
-  #if defined (__APPLE__) && defined(__MACH__)
-    layout->addWidget(calculate_, 9, 0);
-  #else
-    layout->addWidget(calculate_, 10, 0);
-  #endif
+  layout->addWidget(outputInf_, 8, 0, 8, 2, Qt::AlignTop);
+  layout->addWidget(calculate_, 7, 0);
+
+  creditSum_->setMinimumWidth(160);
 }
 
 void Smartcalc::onCreditCalcClicked() {
@@ -525,22 +527,19 @@ void Smartcalc::onCreditCalcClicked() {
   creditInfo inf;
   if (callingCreditButton == calculate_) {
     QString sum = sumLine_->text(), year = yearLine_->text(),
-                  month = monthLine_->text(), rate = percentLine_->text();
+            month = monthLine_->text(), rate = percentLine_->text();
     outputInf_->clear();
     if (sum.isEmpty()) {
       outputInf_->setText("Enter the loant amount!");
-    }
-    else if (year.isEmpty() && month.isEmpty()) {
+    } else if (year.isEmpty() && month.isEmpty()) {
       outputInf_->setText("Enter the loan period!");
-    }
-    else if (rate.isEmpty()) {
+    } else if (rate.isEmpty()) {
       outputInf_->setText("Enter the interest rate!");
-    }
-    else {
+    } else {
       initCreditInfo(&inf);
       inf.amount = sumLine_->text().toDouble();
-      inf.time = yearLine_->text().toDouble() * 12.0 +
-                 monthLine_->text().toDouble();
+      inf.time =
+          yearLine_->text().toDouble() * 12.0 + monthLine_->text().toDouble();
       inf.rate = percentLine_->text().toDouble();
       if (annulling_->isChecked())
         inf.type = 'a';
@@ -584,7 +583,7 @@ void Smartcalc::onDepositCalcClicked() {
       depo.repSum = addSumLine_->text().toDouble();
       depo.remSum = removeSumLine_->text().toDouble();
       depo.cap = capitalization_->isChecked() ? true : false;
-      //printDepo(depo);
+      // printDepo(depo);
       if (depo.replanishment && repAmount.isEmpty()) {
         outDepInf_->setText("Replanish Amount can't be empty!");
       } else if (depo.withdrawals && remAmount.isEmpty()) {

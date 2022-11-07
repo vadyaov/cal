@@ -14,11 +14,13 @@ char *creditCalc(creditInfo *input) {
   } else {
     for (int i = 0; i < input->time; i++) {
       monthPayment = input->amount / input->time +
-                    (input->amount - (input->amount / input->time) * i) *
-                    (input->rate / 1200.0);
+                     (input->amount - (input->amount / input->time) * i) *
+                         (input->rate / 1200.0);
       totalPayment += monthPayment;
-      if (0 == i) firstMonth = monthPayment;
-      else if (i == input->time - 1) lastMonth = monthPayment;
+      if (0 == i)
+        firstMonth = monthPayment;
+      else if (i == input->time - 1)
+        lastMonth = monthPayment;
     }
   }
   overPayment = totalPayment - input->amount;
@@ -26,13 +28,15 @@ char *creditCalc(creditInfo *input) {
     mlen = sprintf(month, "Month Payment: %.2lf\n", monthPayment);
   else
     mlen = sprintf(month, "Month Payment:\n\t from: %.2lf\n\t   to:    %.2lf\n",
-                       firstMonth, lastMonth);
+                   firstMonth, lastMonth);
   tlen = sprintf(total, "Total Payment: %.2lf\n", totalPayment),
   olen = sprintf(overp, "Overpayment : %.2lf\n", overPayment);
   output = calloc(mlen + tlen + olen + 1, sizeof(char));
-  strcpy(output, month);
-  strcat(output, total);
-  strcat(output, overp);
+  if (output) {
+    strcpy(output, month);
+    strcat(output, total);
+    strcat(output, overp);
+  }
   return output;
 }
 
@@ -44,8 +48,8 @@ void initCreditInfo(creditInfo *info) {
 }
 
 void printCreditStruct(creditInfo *inf) {
-  printf("amount = %lf\ntime = %lf\nrate = %lf\ntype = %c\n",
-          inf->amount, inf->time, inf->rate, inf->type);
+  printf("amount = %lf\ntime = %lf\nrate = %lf\ntype = %c\n", inf->amount,
+         inf->time, inf->rate, inf->type);
 }
 /*
 int main() {

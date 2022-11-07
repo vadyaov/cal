@@ -1,6 +1,7 @@
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct depInfo {
@@ -9,14 +10,11 @@ typedef struct depInfo {
   bool cap;
 } deposit;
 
-typedef struct AddRemoveInfo {
-  double capPeriod, repPeriod, remPeriod;
-} addrem;
-          // every
-          //            day  week mont quart y/2 year
+// every
+//            day  week mont quart y/2 year
 const char payFreq[] = {'d', 'w', '1', 'q', '6', 'y', '\0'};
-          // every
-          //              month 2m  quart 4m   6m   year
+// every
+//              month 2m  quart 4m   6m   year
 const char addRemFreq[] = {'1', '2', 'q', '4', '6', 'y', '\0'};
 
 char *depcalc(deposit *depo);
@@ -25,11 +23,7 @@ size_t days(const char *startDate, const char *endDate);
 int toNumber(const char *p, int n);
 size_t yulian(int day, int month, int year);
 char chooseFrequency(const char *str);
-double capCount(deposit *depo, double a, double b);
-void _capCount_(deposit *depo, addrem *a);
-double capital(deposit *depo, addrem *a);
 
-int countPayments(char s, double days);
-int countCapitals(char c, double days);
-
+void calcDepo(deposit *depo, double *percents, double *tax, double *money);
+double daysFrequency(char c);
 void printDepo(deposit dep);

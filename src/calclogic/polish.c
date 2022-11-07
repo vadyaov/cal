@@ -39,11 +39,12 @@ char *polish(const char *input, int *err) {
             }
             if (!*err) pop_s(&root);
           } else if (is_operator_not_bracket(a)) {
+            int pr = give_priority(a);
             if (root) {
               char b = peek_s(root);
-              int pr = give_priority(a);
-              while (b && (is_function(b) || ((is_operator_not_bracket(b) &&
-                                               give_priority(b) >= pr)))) {
+              while (b && (is_function(b) ||
+                           ((is_operator_not_bracket(b) &&
+                             give_priority(b) >= pr && pr != 3)))) {
                 if (pr == 2 && a == b) break;
                 *output++ = pop_s(&root);
                 *output++ = ' ';
@@ -158,7 +159,8 @@ char *put_in_out(const char *number_pointer, char *output, int *i, int *err) {
     output++;
     *i += 1;
   }
-  if (pointflag > 1) *err = 1;;
+  if (pointflag > 1) *err = 1;
+  ;
   return output;
 }
 
@@ -177,7 +179,8 @@ char *space_btw(char *src, int *error) {
         i++;
       }
       probel++;
-      if (pointflag > 1) *error = 1;;
+      if (pointflag > 1) *error = 1;
+      ;
     }
     if (is_letter(src[i])) {
       if (hash(src + i, &i, &replace) != '\0') {
