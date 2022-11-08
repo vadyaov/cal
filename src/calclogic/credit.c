@@ -6,7 +6,6 @@ char *creditCalc(creditInfo *input) {
   int mlen = 0, tlen = 0, olen = 0;
   char *output = NULL;
   char month[512] = {'\0'}, total[256] = {'\0'}, overp[256] = {'\0'};
-  // printCreditStruct(input);
   if (input->type == 'a') {
     monthPayment = (input->amount * input->rate / 1200.0) /
                    (1 - pow(1 + input->rate / 1200.0, -input->time));

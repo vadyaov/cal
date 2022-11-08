@@ -12,9 +12,9 @@ int main(int argc, char **argv) {
   calc.setMaximumHeight(870);
 #else
   calc.setMinimumWidth(620);
-  calc.setMinimumHeight(660);
+  calc.setMinimumHeight(740);
   calc.setMaximumWidth(620);
-  calc.setMaximumHeight(660);
+  calc.setMaximumHeight(740);
 #endif
   calc.show();
   return a.exec();

@@ -165,6 +165,31 @@ START_TEST(polish_t13) {
 }
 END_TEST
 */
+
+START_TEST(credit_t1) {
+  creditInfo info;
+  initCreditInfo(&info);
+  info.amount = 500000.0;
+  info.time = 24.0;
+  info.rate = 7.0;
+  info.type = 'a';
+  ck_assert_str_eq(creditCalc(&info), "Month Payment: 22386.29\n"
+             "Total Payment: 537270.95\nOverpayment : 37270.95\n");
+}
+END_TEST
+
+START_TEST(credit_t2) {
+  creditInfo info;
+  initCreditInfo(&info);
+  info.amount = 10000000.0;
+  info.time = 15 * 12;
+  info.rate = 11.2;
+  info.type = 'd';
+  ck_assert_str_eq(creditCalc(&info), "Month Payment:\n\t from: 148888.89\n\t   to:    56074.07\n"
+             "Total Payment: 18446666.67\nOverpayment : 8446666.67\n");
+}
+END_TEST
+
 Suite *polishSuite() {
   Suite *polish = suite_create("[Polish Unit Test]");
   TCase *tc = tcase_create("polish");
@@ -181,6 +206,9 @@ Suite *polishSuite() {
   tcase_add_test(tc, polish_t10);
   tcase_add_test(tc, polish_t11);
   tcase_add_test(tc, polish_t12);
+
+  tcase_add_test(tc, credit_t1);
+  tcase_add_test(tc, credit_t2);
 
   suite_add_tcase(polish, tc);
 

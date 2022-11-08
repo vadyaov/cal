@@ -51,9 +51,9 @@ class Smartcalc : public QWidget {
       *Mudro_;
 
   QLineEdit *lineEditMain_, *lineEditX_, *leftBorderLine_, *rightBorderLine_,
-      *stepLine_;
+      *stepLine_, *yMinLine_, *yMaxLine_;
 
-  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *wiseTree_;
+  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *yMin, *yMax, *wiseTree_;
 
   QCustomPlot *customPlot;
 

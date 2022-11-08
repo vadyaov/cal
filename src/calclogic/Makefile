@@ -32,7 +32,7 @@ GCDA := $(shell find ./tests/objects -maxdepth 1 -name "*.gcda")
 GCNO := $(shell find ./tests/objects -maxdepth 1 -name "*.gcno")
 
 all: $(calclib) test #gcov_report
-	echo $(SRC_OBJS)
+
 $(calclib): $(SRC_OBJS) $(SRC_INC)
 	ar rc $@ $(SRC_OBJS)
 	ranlib $@

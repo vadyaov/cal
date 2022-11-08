@@ -168,10 +168,14 @@ void Smartcalc::createOther() {
   leftBorderLine_ = new QLineEdit();
   rightBorderLine_ = new QLineEdit();
   stepLine_ = new QLineEdit();
+  yMinLine_ = new QLineEdit();
+  yMaxLine_ = new QLineEdit();
   xValue_ = new QLabel(tr("x:"));
   leftBorder_ = new QLabel(tr("from x:"));
   rightBorder_ = new QLabel(tr("to x:"));
-  step_ = new QLabel(tr("Step"));
+  step_ = new QLabel(tr("X Step"));
+  yMin = new QLabel(tr("from y:"));
+  yMax = new QLabel(tr("to y:"));
   customPlot = new QCustomPlot();
   wiseTree_ = new QLabel();
 }
@@ -221,6 +225,10 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(leftBorderLine_, 7, 6);
   layout->addWidget(rightBorderLine_, 9, 6);
   layout->addWidget(stepLine_, 11, 6);
+  layout->addWidget(yMin, 14, 6);
+  layout->addWidget(yMinLine_, 15, 6);
+  layout->addWidget(yMax, 16, 6);
+  layout->addWidget(yMaxLine_, 17, 6);
 }
 
 void Smartcalc::connectWidgets() {
@@ -386,35 +394,41 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
 }
 
 void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
-  double start = leftBorderLine_->text().toDouble(),
-         end = rightBorderLine_->text().toDouble(),
-         step = stepLine_->text().toDouble();
-  int dots = (end - start) / step + 1;
-  QVector<double> x(dots), y(dots);
-  xinfo.x = start;
-  for (int i = 0; i < dots; ++i) {
-    x[i] = xinfo.x;
-    y[i] = calc(str, &xinfo);
-    if (y[i] > 1000000.0)
-      y[i] = std::numeric_limits<double>::infinity();
-    else if (y[i] < -1000000.0)
-      y[i] = -std::numeric_limits<double>::infinity();
-    // printf("x = %.16lf\ty = %.16lf\n", x[i], y[i]);
-    xinfo.x += step;
-    if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
-    if (xinfo.err) {
-      lineEditMain_->setText("error");
-      return;
+  QString x1 = leftBorderLine_->text(), x2 = rightBorderLine_->text();
+  if (!x1.isEmpty() && !x2.isEmpty()) {
+    double xstart = leftBorderLine_->text().toDouble(),
+           xend = rightBorderLine_->text().toDouble(),
+           xstep = stepLine_->text().toDouble();
+    if (xend > xstart) {
+      int dots = (xend - xstart) / xstep + 1;
+      QVector<double> x(dots), y(dots);
+      xinfo.x = xstart;
+      for (int i = 0; i < dots; ++i) {
+        x[i] = xinfo.x;
+        y[i] = calc(str, &xinfo);
+        if (y[i] > 1000000.0)
+          y[i] = std::numeric_limits<double>::infinity();
+        else if (y[i] < -1000000.0)
+          y[i] = -std::numeric_limits<double>::infinity();
+        xinfo.x += step;
+        if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
+        if (xinfo.err) {
+          lineEditMain_->setText("error");
+          return;
+        }
+      }
+      plot->graph(0)->setData(x, y);
+      plot->xAxis->rescale();
+      plot->replot();
+    } else {
+      lineEditMain_->setText("right X must be greater than left X");
     }
+  } else {
+    lineEditMain_->setText("X range line can't be empty!");
   }
-  plot->graph(0)->setData(x, y);
-  plot->xAxis->rescale();
-  plot->replot();
 }
 
 void Smartcalc::customWidgets() {
-  frame1->setGeometry(0, 0, 750, 750);
-  frame2->setGeometry(0, 0, 300, 300);
   xValue_->setAlignment(Qt::AlignRight);
   QFont f("Arial", 14, QFont::Bold);
   xValue_->setFont(f);
@@ -424,8 +438,10 @@ void Smartcalc::customWidgets() {
   leftBorderLine_->setMaximumWidth(80);
   stepLine_->setMaximumWidth(80);
   rightBorderLine_->setMaximumWidth(80);
-  leftBorderLine_->setText("-50.0");
-  rightBorderLine_->setText("50.0");
+  yMinLine_->setMaximumWidth(80);
+  yMaxLine_->setMaximumWidth(80);
+  leftBorderLine_->setText("-10.0");
+  rightBorderLine_->setText("10.0");
   stepLine_->setText("0.1");
   leftBorderLine_->setAlignment(Qt::AlignCenter);
   rightBorderLine_->setAlignment(Qt::AlignCenter);
@@ -480,7 +496,7 @@ void Smartcalc::mudroFunction() {
   wiseTree_->setMaximumWidth(80);
   img = img.scaledToWidth(75);
   wiseTree_->setPixmap(img);
-  mainLayout->addWidget(wiseTree_, 12, 6, 18, 6);
+  mainLayout->addWidget(wiseTree_, 18, 6, 21, 6);
 }
 
 void Smartcalc::createCreditWidgets() {
@@ -514,6 +530,7 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(percentLine_, 3, 1);
 
   layout->addWidget(annulling_, 4, 1);
+  annulling_->setChecked(true);
   layout->addWidget(differ_, 5, 1);
 
   layout->addWidget(outputInf_, 8, 0, 8, 2, Qt::AlignTop);
@@ -530,11 +547,11 @@ void Smartcalc::onCreditCalcClicked() {
             month = monthLine_->text(), rate = percentLine_->text();
     outputInf_->clear();
     if (sum.isEmpty()) {
-      outputInf_->setText("Enter the loant amount!");
+      outputInf_->setText("Enter the Loan Amount!");
     } else if (year.isEmpty() && month.isEmpty()) {
-      outputInf_->setText("Enter the loan period!");
+      outputInf_->setText("Enter the Loan Period!");
     } else if (rate.isEmpty()) {
-      outputInf_->setText("Enter the interest rate!");
+      outputInf_->setText("Enter the Interest Rate!");
     } else {
       initCreditInfo(&inf);
       inf.amount = sumLine_->text().toDouble();
@@ -545,10 +562,16 @@ void Smartcalc::onCreditCalcClicked() {
         inf.type = 'a';
       else if (differ_->isChecked())
         inf.type = 'd';
-      char *out = creditCalc(&inf);
-      QString str = out;
-      outputInf_->setText(str);
-      free(out);
+      if (std::signbit(inf.amount) || std::signbit(inf.time) || std::signbit(inf.rate))
+          outputInf_->setText("Error! Input values can't be negative.");
+      else if (!inf.amount || !inf.time || !inf.rate)
+        outputInf_->setText("| Loan Amount | Loan Term | Interest Rate | can't be 0");
+      else {
+        char *out = creditCalc(&inf);
+        QString str = out;
+        outputInf_->setText(str);
+        free(out);
+      }
     }
   }
 }
