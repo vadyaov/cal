@@ -110,10 +110,16 @@ class Smartcalc : public QWidget {
   void addWidgetsToLayout(QGridLayout *layout);
   void connectWidgets();
   void doEqualButton();
-  void initInfo(info *data);
   void initGraph(QCustomPlot *plot);
   void printGraph(QCustomPlot *plot, const char *str);
   void customWidgets();
+  void setMainCalcAlignments();
+  void setMainCalcWidths();
+  void setMainCalcSkins();
+  void setMainCalcTexts();
+  void mainCalcCustom();
+  void creditCalcCustom();
+  void depositCalcCustom();
   void mudroFunction();
 
   void createCreditWidgets();

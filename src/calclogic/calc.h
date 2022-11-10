@@ -12,3 +12,4 @@ double calc(const char *polishString, info *info);
 double convert_to_double(char *src, int *i);
 int makeOperator(struct stack_n **root, char s);
 int makeFunction(struct stack_n **root, char s);
+void initInfo(info *data);

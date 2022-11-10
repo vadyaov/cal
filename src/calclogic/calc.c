@@ -130,3 +130,8 @@ int makeFunction(struct stack_n **root, char s) {
   }
   return error;
 }
+
+void initInfo(info *data) {
+  data->x = 0.0;
+  data->err = 0;
+}

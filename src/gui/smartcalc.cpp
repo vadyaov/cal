@@ -370,11 +370,6 @@ void Smartcalc::doEqualButton() {
   }
 }
 
-void Smartcalc::initInfo(info *data) {
-  data->x = 0.0;
-  data->err = 0;
-}
-
 void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->addGraph();
   plot->graph(0)->setPen(QPen(Qt::blue));
@@ -384,17 +379,6 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
   plot->xAxis2->setTickLabels(false);
   plot->yAxis2->setVisible(true);
   plot->yAxis2->setTickLabels(false);
-
-  int pxx = plot->yAxis->coordToPixel(0);
-  int pxy = plot->xAxis->coordToPixel(0);
-  plot->xAxis->setOffset(-plot->axisRect()->height() - plot->axisRect()->top() +
-                         pxx);
-  plot->yAxis->setOffset(plot->axisRect()->left() - pxy);
-
-  connect(plot->xAxis, SIGNAL(rangeChanged(QCPRange)), plot->xAxis2,
-          SLOT(setRange(QCPRange)));
-  connect(plot->yAxis, SIGNAL(rangeChanged(QCPRange)), plot->yAxis2,
-          SLOT(setRange(QCPRange)));
 
   plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom |
                         QCP::iSelectPlottables);
@@ -444,50 +428,47 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
 }
 
 void Smartcalc::customWidgets() {
+  mainCalcCustom();
+  creditCalcCustom();
+  depositCalcCustom();
+}
+
+void Smartcalc::mainCalcCustom() {
+  setMainCalcAlignments();
+  setMainCalcWidths();
+  setMainCalcSkins();
+  setMainCalcTexts();
+}
+
+void Smartcalc::setMainCalcAlignments() {
   xValue_->setAlignment(Qt::AlignRight);
-  QFont f("Arial", 14, QFont::Bold);
-  xValue_->setFont(f);
-  lineEditX_->setText("0.0");
-  lineEditX_->setMaximumWidth(80);
   lineEditX_->setAlignment(Qt::AlignCenter);
-  leftBorderLine_->setMaximumWidth(80);
-  stepLine_->setMaximumWidth(80);
-  rightBorderLine_->setMaximumWidth(80);
-  yMinLine_->setMaximumWidth(80);
-  yMaxLine_->setMaximumWidth(80);
-  leftBorderLine_->setText("-10.0");
-  rightBorderLine_->setText("10.0");
-  yMinLine_->setText("-10.0");
-  yMaxLine_->setText("10.0");
-  stepLine_->setText("0.1");
   leftBorderLine_->setAlignment(Qt::AlignCenter);
   rightBorderLine_->setAlignment(Qt::AlignCenter);
   yMinLine_->setAlignment(Qt::AlignCenter);
   yMaxLine_->setAlignment(Qt::AlignCenter);
   stepLine_->setAlignment(Qt::AlignCenter);
   lineEditMain_->setAlignment(Qt::AlignRight);
+}
+
+void Smartcalc::setMainCalcWidths() {
+  lineEditX_->setMaximumWidth(80);
+  leftBorderLine_->setMaximumWidth(80);
+  stepLine_->setMaximumWidth(80);
+  rightBorderLine_->setMaximumWidth(80);
+  yMinLine_->setMaximumWidth(80);
+  yMaxLine_->setMaximumWidth(80);
+}
+
+void Smartcalc::setMainCalcSkins() {
   lineEditMain_->setProperty("mandatoryField", true);
-  lineEditMain_->setStyleSheet(
-      "color: black;"
-      "background-color: white;"
-      "selection-background-color: grey;");
-  lineEditX_->setStyleSheet(
-      "color: black;"
-      "background-color: lightgrey;");
-  QFont fontX = {"Arial", 12, QFont::Bold};
-  buttonX_->setFont(fontX);
-  leftBorderLine_->setStyleSheet(
-      "color: blue;"
-      "background-color: lightgrey;");
-  rightBorderLine_->setStyleSheet(
-      "color: blue;"
-      "background-color: lightgrey;");
-  yMinLine_->setStyleSheet(
-      "color: green;"
-      "background-color: lightgrey;");
-  yMaxLine_->setStyleSheet(
-      "color: green;"
-      "background-color: lightgrey;");
+  lineEditMain_->setStyleSheet("color: black; background-color: white;"
+                               "selection-background-color: grey;");
+  lineEditX_->setStyleSheet("color: black; background-color: lightgrey;");
+  leftBorderLine_->setStyleSheet("color: blue; background-color: lightgrey;");
+  rightBorderLine_->setStyleSheet("color: blue; background-color: lightgrey;");
+  yMinLine_->setStyleSheet("color: green; background-color: lightgrey;");
+  yMaxLine_->setStyleSheet("color: green; background-color: lightgrey;");
   buttonEqual_->setStyleSheet("color: black; background-color: lightBlue;");
   button0_->setStyleSheet("color: black; background-color: grey;");
   button1_->setStyleSheet("color: black; background-color: grey;");
@@ -501,16 +482,32 @@ void Smartcalc::customWidgets() {
   button9_->setStyleSheet("color: black; background-color: grey;");
   buttonPoint_->setStyleSheet("color: black; background-color: grey;");
   buttonBspc_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+}
 
+void Smartcalc::setMainCalcTexts() {
+  QFont f("Arial", 14, QFont::Bold);
+  xValue_->setFont(f);
+  lineEditX_->setText("0.0");
+  leftBorderLine_->setText("-10.0");
+  rightBorderLine_->setText("10.0");
+  yMinLine_->setText("-10.0");
+  yMaxLine_->setText("10.0");
+  stepLine_->setText("0.1");
+  QFont fontX = {"Arial", 12, QFont::Bold};
+  buttonX_->setFont(fontX);
+}
+
+void Smartcalc::creditCalcCustom() {
   monthLine_->setPlaceholderText(QString("months"));
   yearLine_->setPlaceholderText(QString("years"));
   percentLine_->setPlaceholderText(QString("%"));
   sumLine_->setPlaceholderText(QString("$"));
+}
 
+void Smartcalc::depositCalcCustom() {
   depPercentLine_->setPlaceholderText(QString("%"));
   depTaxRateLine_->setPlaceholderText(QString("%"));
   depSumLine_->setPlaceholderText(QString("$"));
-
   addSumLine_->setPlaceholderText(QString("$"));
   removeSumLine_->setPlaceholderText(QString("$"));
 }
