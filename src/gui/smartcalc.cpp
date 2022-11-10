@@ -1,5 +1,5 @@
 #include "smartcalc.h"
-
+#include <iostream>
 #include <QtWidgets>
 
 // Constructor for main widget
@@ -9,19 +9,63 @@ Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   addWidgetsToLayout(mainLayout);
   addCreditWidgetsToLayout(creditLayout);
   addDepositWidgetsToLayout(depositLayout);
-  frame1->setLayout(mainLayout);
-  frame2->setLayout(creditLayout);
-  frame3->setLayout(depositLayout);
+  setFrames();
   connectWidgets();
   customWidgets();
-  calcWidget->addTab(frame1, "calc");
-  calcWidget->addTab(frame2, "credit");
-  calcWidget->addTab(frame3, "deposit");
+  addTabs();
   setWindowTitle(tr("Smartcalc_v1.0"));
 }
 
-// Destructor
 Smartcalc::~Smartcalc() {
+  deleteBasicCalc();
+  delete dateLayout_;
+  delete creditLayout;
+  delete depositLayout;
+  delete annulling_;
+  delete differ_;
+  delete creditSum_;
+  delete creditTime_;
+  delete interestRate_;
+  delete paymentType_;
+  delete sumLine_;
+  delete yearLine_;
+  delete monthLine_;
+  delete percentLine_;
+  delete yMinLine_;
+  delete yMaxLine_;
+  delete yMin;
+  delete yMax;
+
+  delete depositSum_;
+  delete depositTime_;
+  delete depInterestRate_;
+  delete depTaxRate_;
+  delete payFrequency_;
+  delete addToDep_;
+  delete addSum_;
+  delete removeFromDep_;
+  delete removeSum_;
+  delete depSumLine_;
+  delete depPercentLine_;
+  delete depTaxRateLine_;
+  delete addSumLine_;
+  delete removeSumLine_;
+
+  delete capitalization_;
+  delete payFreq_;
+  delete addDep_;
+  delete removeDep_;
+  delete startDay_;
+  delete endDay_;
+  delete calcDep_;
+
+  delete frame1;
+  delete frame2;
+  delete frame3;
+  delete calcWidget;
+}
+
+void Smartcalc::deleteBasicCalc() {
   delete button0_;
   delete button1_;
   delete button2_;
@@ -67,48 +111,7 @@ Smartcalc::~Smartcalc() {
   delete stepLine_;
   delete Mudro_;
   delete wiseTree_;
-  delete dateLayout_;
   delete mainLayout;
-  delete creditLayout;
-  delete depositLayout;
-  delete annulling_;
-  delete differ_;
-  delete creditSum_;
-  delete creditTime_;
-  delete interestRate_;
-  delete paymentType_;
-  delete sumLine_;
-  delete yearLine_;
-  delete monthLine_;
-  delete percentLine_;
-
-  delete depositSum_;
-  delete depositTime_;
-  delete depInterestRate_;
-  delete depTaxRate_;
-  delete payFrequency_;
-  delete addToDep_;
-  delete addSum_;
-  delete removeFromDep_;
-  delete removeSum_;
-  delete depSumLine_;
-  delete depPercentLine_;
-  delete depTaxRateLine_;
-  delete addSumLine_;
-  delete removeSumLine_;
-
-  delete capitalization_;
-  delete payFreq_;
-  delete addDep_;
-  delete removeDep_;
-  delete startDay_;
-  delete endDay_;
-  delete calcDep_;
-
-  delete frame1;
-  delete frame2;
-  delete frame3;
-  delete calcWidget;
 }
 
 void Smartcalc::createWidgets() {
@@ -218,7 +221,11 @@ void Smartcalc::addWidgetsToLayout(QGridLayout *layout) {
   layout->addWidget(graphButton_, 5, 0);
   layout->addWidget(Mudro_, 1, 0);
   layout->addWidget(xValue_, 5, 1);
+#if defined __APPLE__ && defined __MACH__
+  layout->addWidget(customPlot, 6, 0, 30, 6);
+#else
   layout->addWidget(customPlot, 6, 0, 50, 6);
+#endif
   layout->addWidget(leftBorder_, 6, 6);
   layout->addWidget(rightBorder_, 8, 6);
   layout->addWidget(step_, 10, 6);
@@ -394,24 +401,32 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
 }
 
 void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
-  QString x1 = leftBorderLine_->text(), x2 = rightBorderLine_->text();
-  if (!x1.isEmpty() && !x2.isEmpty()) {
-    double xstart = leftBorderLine_->text().toDouble(),
-           xend = rightBorderLine_->text().toDouble(),
-           xstep = stepLine_->text().toDouble();
-    if (xend > xstart) {
+  QString x1 = leftBorderLine_->text(), x2 = rightBorderLine_->text(),
+          y1 = yMinLine_->text(), y2 = yMaxLine_->text();
+  if (!x1.isEmpty() && !x2.isEmpty() && !y1.isEmpty() && !y2.isEmpty()) {
+    double xstart = x1.toDouble(), xend = x2.toDouble(),
+           xstep = stepLine_->text().toDouble(),
+           ydown = y1.toDouble(), ytop = y2.toDouble();
+    if (xend > xstart && ytop > ydown) {
       int dots = (xend - xstart) / xstep + 1;
-      QVector<double> x(dots), y(dots);
+      for (double x = xstart; x <= xend; x += xstep) {
+        xinfo.x = x;
+        if (calc(str, &xinfo) > ytop || calc(str, &xinfo) < ydown)
+          dots--;
+      }
       xinfo.x = xstart;
+      QVector<double> x(dots), y(dots);
       for (int i = 0; i < dots; ++i) {
+        while (xinfo.x <= xend &&
+              (calc(str, &xinfo) > ytop || calc(str, &xinfo) < ydown))
+          xinfo.x += xstep;
+        if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
         x[i] = xinfo.x;
         y[i] = calc(str, &xinfo);
-        if (y[i] > 1000000.0)
-          y[i] = std::numeric_limits<double>::infinity();
-        else if (y[i] < -1000000.0)
-          y[i] = -std::numeric_limits<double>::infinity();
-        xinfo.x += step;
-        if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
+        if (y[i] > YMAX) y[i] = std::numeric_limits<double>::infinity();
+        else if (y[i] < YMIN) y[i] = -std::numeric_limits<double>::infinity();
+        else if (fabs(y[i]) < 1e-7) y[i] = 0.0;
+        xinfo.x += xstep;
         if (xinfo.err) {
           lineEditMain_->setText("error");
           return;
@@ -421,10 +436,10 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
       plot->xAxis->rescale();
       plot->replot();
     } else {
-      lineEditMain_->setText("right X must be greater than left X");
+      lineEditMain_->setText("Incorrect range!");
     }
   } else {
-    lineEditMain_->setText("X range line can't be empty!");
+    lineEditMain_->setText("Range lines can't be empty!");
   }
 }
 
@@ -442,9 +457,13 @@ void Smartcalc::customWidgets() {
   yMaxLine_->setMaximumWidth(80);
   leftBorderLine_->setText("-10.0");
   rightBorderLine_->setText("10.0");
+  yMinLine_->setText("-10.0");
+  yMaxLine_->setText("10.0");
   stepLine_->setText("0.1");
   leftBorderLine_->setAlignment(Qt::AlignCenter);
   rightBorderLine_->setAlignment(Qt::AlignCenter);
+  yMinLine_->setAlignment(Qt::AlignCenter);
+  yMaxLine_->setAlignment(Qt::AlignCenter);
   stepLine_->setAlignment(Qt::AlignCenter);
   lineEditMain_->setAlignment(Qt::AlignRight);
   lineEditMain_->setProperty("mandatoryField", true);
@@ -462,6 +481,12 @@ void Smartcalc::customWidgets() {
       "background-color: lightgrey;");
   rightBorderLine_->setStyleSheet(
       "color: blue;"
+      "background-color: lightgrey;");
+  yMinLine_->setStyleSheet(
+      "color: green;"
+      "background-color: lightgrey;");
+  yMaxLine_->setStyleSheet(
+      "color: green;"
       "background-color: lightgrey;");
   buttonEqual_->setStyleSheet("color: black; background-color: lightBlue;");
   button0_->setStyleSheet("color: black; background-color: grey;");
@@ -493,10 +518,14 @@ void Smartcalc::customWidgets() {
 void Smartcalc::mudroFunction() {
   QString imagePath = "index.png";
   QPixmap img(imagePath);
-  wiseTree_->setMaximumWidth(80);
+  wiseTree_->setMaximumWidth(75);
   img = img.scaledToWidth(75);
   wiseTree_->setPixmap(img);
+#if defined __APPLE__ && defined __MACH__
+  mainLayout->addWidget(wiseTree_, 17, 6, 21, 6);
+#else
   mainLayout->addWidget(wiseTree_, 18, 6, 21, 6);
+#endif
 }
 
 void Smartcalc::createCreditWidgets() {
@@ -714,4 +743,16 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   removeDep_->addItem("every 4 month");
   removeDep_->addItem("every 6 month");
   removeDep_->addItem("every year");
+}
+
+void Smartcalc::setFrames() {
+  frame1->setLayout(mainLayout);
+  frame2->setLayout(creditLayout);
+  frame3->setLayout(depositLayout);
+}
+
+void Smartcalc::addTabs() {
+  calcWidget->addTab(frame1, "calc");
+  calcWidget->addTab(frame2, "credit");
+  calcWidget->addTab(frame3, "deposit");
 }

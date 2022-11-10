@@ -7,9 +7,9 @@ int main(int argc, char **argv) {
   Smartcalc calc;
 #if defined(__APPLE__) && defined(__MACH__)
   calc.setMinimumWidth(650);
-  calc.setMinimumHeight(870);
+  calc.setMinimumHeight(720);
   calc.setMaximumWidth(650);
-  calc.setMaximumHeight(870);
+  calc.setMaximumHeight(720);
 #else
   calc.setMinimumWidth(620);
   calc.setMinimumHeight(740);

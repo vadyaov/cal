@@ -1,7 +1,7 @@
 #ifndef _SRC_STACK_H
 #define _SRC_STACK_H
 
-#include "libs.h"
+#include "stdlib.h"
 
 struct stack_n {
   double number;

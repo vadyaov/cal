@@ -10,12 +10,14 @@ typedef struct depInfo {
   bool cap;
 } deposit;
 
+/*
 // every
 //            day  week mont quart y/2 year
 const char payFreq[] = {'d', 'w', '1', 'q', '6', 'y', '\0'};
 // every
 //              month 2m  quart 4m   6m   year
 const char addRemFreq[] = {'1', '2', 'q', '4', '6', 'y', '\0'};
+*/
 
 char *depcalc(deposit *depo);
 void initDeposit(deposit *depo);

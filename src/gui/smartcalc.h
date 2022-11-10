@@ -13,7 +13,7 @@ extern "C" {
 #include "../calclogic/credit.h"
 #include "../calclogic/deposit.h"
 }
-
+/*
 class QGridLayout;
 class QPushButton;
 class QLineEdit;
@@ -27,6 +27,9 @@ class QPixmap;
 class QTabWidget;
 class QDate;
 class QDateEdit;
+*/
+#define YMIN -1000000.0
+#define YMAX 1000000.0
 
 class Smartcalc : public QWidget {
   Q_OBJECT
@@ -99,8 +102,11 @@ class Smartcalc : public QWidget {
   void onCreditCalcClicked();
   void onDepositCalcClicked();
   void createWidgets();
+  void deleteBasicCalc();
   void createButtons();
   void createOther();
+  void setFrames();
+  void addTabs();
   void addWidgetsToLayout(QGridLayout *layout);
   void connectWidgets();
   void doEqualButton();
