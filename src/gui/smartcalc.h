@@ -69,13 +69,15 @@ class Smartcalc : public QWidget {
 
   QRadioButton *annulling_, *differ_;
 
-  QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_;
+  QLabel *creditSum_, *creditTime_, *interestRate_, *paymentType_, *stonks_;
 
   QLineEdit *sumLine_, *yearLine_, *monthLine_, *percentLine_;
 
   QTextEdit *outputInf_;
 
-  QPushButton *calculate_;
+  QPushButton *calculate_, *stonksButton_;
+
+  QHBoxLayout *memLayout_;
 
   /* DepositCalc Widgets */
 
@@ -103,6 +105,8 @@ class Smartcalc : public QWidget {
   void onDepositCalcClicked();
   void createWidgets();
   void deleteBasicCalc();
+  void deleteCreditCalc();
+  void deleteDepositCalc();
   void createButtons();
   void createOther();
   void setFrames();
