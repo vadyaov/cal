@@ -358,7 +358,7 @@ void Smartcalc::onButtonClicked() {
 void Smartcalc::stonksButtonClicked() {
   QObject *callingStonksButton = QObject::sender();
   if (callingStonksButton == stonksButton_) {
-  QString imagePath = "stonks.jpeg";
+  QString imagePath = "pic/stonks.jpeg";
   QPixmap img(imagePath);
   stonks_->setMaximumHeight(260);
   img = img.scaledToHeight(260);
@@ -550,7 +550,7 @@ void Smartcalc::depositCalcCustom() {
 }
 
 void Smartcalc::mudroFunction() {
-  QString imagePath = "index.png";
+  QString imagePath = "pic/index.png";
   QPixmap img(imagePath);
   wiseTree_->setMaximumWidth(75);
   img = img.scaledToWidth(75);
