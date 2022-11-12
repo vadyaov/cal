@@ -99,14 +99,9 @@ int makeOperator(struct stack_n **root, char s) {
 }
 
 int makeFunction(struct stack_n **root, char s) {
-  double number = 0.0;
   int error = 0;
-  if (NULL != *root)
-    number = pop_n(root);
-  else
-    error = 1;
-  if (0 == error) {
-    double result = 0.0;
+  if (NULL != *root) {
+    double number = pop_n(root), result = 0.0;
     if (s == 's') {
       result = sin(number);
     } else if (s == 'c') {

@@ -3,7 +3,7 @@
 char *depcalc(deposit *depo) {
   double per = 0.0, tax = 0.0, all = 0.0;
   char *res = NULL;
-  char buf[100] = {'\0'};
+  char buf[256] = {'\0'};
   calcDepo(depo, &per, &tax, &all);
   sprintf(buf, "Percents: %.2lf\nDeposit:  %.2lf\nYourTax:  %.2lf\n", per, all,
           tax);
@@ -71,13 +71,11 @@ char chooseFrequency(const char *str) {
 
 void calcDepo(deposit *depo, double *percents, double *tax, double *money) {
   int i = 0, ii = 1, jj = 1, kk = 1;
-  double p = 0.0;                                         // percents
-  double dayPer = depo->intRate / 36500.0;                // rate for 1 day
-  double capPeriod = daysFrequency(depo->frequency);      // in days
-  double addPeriod = daysFrequency(depo->replanishment);  // in days
-  double remPeriod = daysFrequency(depo->withdrawals);    // in days
-  printf("addperiod = %lf\n", addPeriod);
-  printf("replanishment = %c\n", depo->replanishment);
+  double p = 0.0;
+  double dayPer = depo->intRate / 36500.0,
+         capPeriod = daysFrequency(depo->frequency),
+         addPeriod = daysFrequency(depo->replanishment),
+         remPeriod = daysFrequency(depo->withdrawals);
   while (i < depo->depTerm) {
     p += depo->depSum * dayPer;
     if (depo->cap && i == (int)(capPeriod * ii)) {
@@ -86,14 +84,11 @@ void calcDepo(deposit *depo, double *percents, double *tax, double *money) {
       p = 0.0;
       ii++;
     }
-    printf("i = %d\t addPeriod * jj = %d\n", i, (int)(addPeriod * jj));
     if (depo->replanishment && i == (int)(addPeriod * jj)) {
-      printf("i should be here 12 times\n");
       if (jj++ <= (int)(depo->depTerm / addPeriod))
         depo->depSum += depo->repSum;
     }
     if (depo->withdrawals && i == (int)(remPeriod * kk)) {
-      printf("kk = %d\t %d\n", kk, (int)(depo->depTerm / remPeriod));
       if (kk++ <= (int)(depo->depTerm / remPeriod))
         depo->depSum -= depo->remSum;
     }
@@ -107,8 +102,9 @@ void calcDepo(deposit *depo, double *percents, double *tax, double *money) {
 }
 
 double daysFrequency(char c) {
-  double daysInMonth = 30.4167;
+  int i = 0;
   const char f[] = "dw12q46y";
+  const double daysInMonth = 30.4167;
   const double r[] = {1.0,
                       7.0,
                       daysInMonth,
@@ -117,15 +113,6 @@ double daysFrequency(char c) {
                       daysInMonth * 4,
                       daysInMonth * 6,
                       daysInMonth * 12};
-  int i = 0;
   while (f[i] && f[i] != c) i++;
   return r[i];
-}
-
-void printDepo(deposit dep) {
-  printf(
-      "depSum:%lf\ndeTerm:%lf\nintRate:%lf\ntaxRate:%lf\nrepSum:%lf\nremSum:%"
-      "lf\nfrequency:%c\nreplanishm:%c\nwithdraw:%c\ncap:%d\n\n",
-      dep.depSum, dep.depTerm, dep.intRate, dep.taxRate, dep.repSum, dep.remSum,
-      dep.frequency, dep.replanishment, dep.withdrawals, dep.cap);
 }

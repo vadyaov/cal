@@ -1,5 +1,8 @@
-#include <string.h>
+#ifndef _SRC_CALCLOGIC_POLISH_H
+#define _SRC_CALCLOGIC_POLISH_H
+
 #include <stdlib.h>
+#include <string.h>
 
 char *polish(const char *input, int *err);
 
@@ -19,3 +22,5 @@ int fspaces(const char *src);
 int fsymbol(const char *src);
 int give_priority(char c);
 void find_unary(char *src);
+
+#endif /* _SRC_CALCLOGIC_POLISH_H */

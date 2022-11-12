@@ -151,20 +151,123 @@ START_TEST(polish_t12) {
   ck_assert_double_eq_tol(result, expected, 1e-7);
 }
 END_TEST
-/*
-START_TEST(polish_t13) {
-  info x = {0};
+
+START_TEST(polish_t1_error) {
+  info x;
+  initInfo(&x);
   const char input[] = ".3";
-  int error = 0;
   double result = 0.0, expected = 0.0;
   x.x = 55.5; 
   result = calc(input, &x); 
-  expected = -(-87.543*sin(0.999+tan(55.5)-2.234))-50.66*(acos(0.234)/atan(0.55));
-  ck_assert_int_eq(error, 0);
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
   ck_assert_double_eq_tol(result, expected, 1e-7);
 }
 END_TEST
-*/
+
+START_TEST(polish_t2_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "sin(3)cos11)/15";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t3_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "+-/sin*(3)//cos11)/15";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t4_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "35/+*///mod1-+";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t5_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "sin((--1(()()))))";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t6_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "sin cos + tan log((()) -";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t7_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "3...44.5..2..23.4..5.5.5.3.4.3.4.";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t8_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "sin((((((((((((((1)";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
+
+START_TEST(polish_t9_error) {
+  info x;
+  initInfo(&x);
+  const char input[] = "-------sin-------((((((((((((((++-++1)++++++++";
+  double result = 0.0, expected = 0.0;
+  x.x = 55.5; 
+  result = calc(input, &x); 
+  expected = 0.0;
+  ck_assert_int_eq(x.err, 1);
+  ck_assert_double_eq_tol(result, expected, 1e-7);
+}
+END_TEST
 
 START_TEST(credit_t1) {
   creditInfo info;
@@ -173,8 +276,10 @@ START_TEST(credit_t1) {
   info.time = 24.0;
   info.rate = 7.0;
   info.type = 'a';
-  ck_assert_str_eq(creditCalc(&info), "Month Payment: 22386.29\n"
+  char *out = creditCalc(&info);
+  ck_assert_str_eq(out, "Month Payment: 22386.29\n"
              "Total Payment: 537270.95\nOverpayment : 37270.95\n");
+  free(out);
 }
 END_TEST
 
@@ -185,8 +290,10 @@ START_TEST(credit_t2) {
   info.time = 15 * 12;
   info.rate = 11.2;
   info.type = 'd';
-  ck_assert_str_eq(creditCalc(&info), "Month Payment:\n\t from: 148888.89\n\t   to:    56074.07\n"
+  char *out = creditCalc(&info);
+  ck_assert_str_eq(out, "Month Payment:\n\t from: 148888.89\n\t   to:    56074.07\n"
              "Total Payment: 18446666.67\nOverpayment : 8446666.67\n");
+  free(out);
 }
 END_TEST
 
@@ -206,6 +313,15 @@ Suite *polishSuite() {
   tcase_add_test(tc, polish_t10);
   tcase_add_test(tc, polish_t11);
   tcase_add_test(tc, polish_t12);
+  tcase_add_test(tc, polish_t1_error);
+  tcase_add_test(tc, polish_t2_error);
+  tcase_add_test(tc, polish_t3_error);
+  tcase_add_test(tc, polish_t4_error);
+  tcase_add_test(tc, polish_t5_error);
+  tcase_add_test(tc, polish_t6_error);
+  tcase_add_test(tc, polish_t7_error);
+  tcase_add_test(tc, polish_t8_error);
+  tcase_add_test(tc, polish_t9_error);
 
   tcase_add_test(tc, credit_t1);
   tcase_add_test(tc, credit_t2);

@@ -1,3 +1,6 @@
+#ifndef _SRC_CALCLOGIC_CREDIT_H
+#define _SRC_CALCLOGIC_CREDIT_H
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,4 +13,5 @@ typedef struct credit {
 
 char *creditCalc(creditInfo *input);
 void initCreditInfo(creditInfo *info);
-void printCreditStruct(creditInfo *inf);
+
+#endif /*  _SRC_CALCLOGIC_CREDIT_H */

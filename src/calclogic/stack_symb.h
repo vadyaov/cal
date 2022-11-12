@@ -14,4 +14,4 @@ char peek_s(struct stack_s* root);
 void destroy_s(struct stack_s** root);
 void print_stack_s(struct stack_s* root);
 
-#endif  // _SRC_STACK_H
+#endif /*  _SRC_STACK_H */

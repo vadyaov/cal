@@ -1,6 +1,4 @@
 #include "smartcalc.h"
-#include <iostream>
-#include <QtWidgets>
 
 // Constructor for main widget
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
@@ -9,6 +7,7 @@ Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   addWidgetsToLayout(mainLayout);
   addCreditWidgetsToLayout(creditLayout);
   addDepositWidgetsToLayout(depositLayout);
+  setBoxItems();
   setFrames();
   connectWidgets();
   customWidgets();
@@ -69,6 +68,10 @@ void Smartcalc::deleteBasicCalc() {
   delete step_;
   delete leftBorderLine_;
   delete rightBorderLine_;
+  delete yMinLine_;
+  delete yMaxLine_;
+  delete yMin;
+  delete yMax;
   delete stepLine_;
   delete Mudro_;
   delete wiseTree_;
@@ -86,12 +89,10 @@ void Smartcalc::deleteCreditCalc() {
   delete yearLine_;
   delete monthLine_;
   delete percentLine_;
-  delete yMinLine_;
-  delete yMaxLine_;
-  delete yMin;
-  delete yMax;
+  delete outputInf_;
   delete stonks_;
   delete stonksButton_;
+  delete memLayout_;
   delete creditLayout;
 }
 
@@ -281,6 +282,7 @@ void Smartcalc::connectWidgets() {
   connect(Mudro_, SIGNAL(clicked()), this, SLOT(onButtonClicked()));
   connect(calculate_, SIGNAL(clicked()), this, SLOT(onCreditCalcClicked()));
   connect(calcDep_, SIGNAL(clicked()), this, SLOT(onDepositCalcClicked()));
+  connect(stonksButton_, SIGNAL(clicked()), this, SLOT(stonksButtonClicked()));
 }
 
 void Smartcalc::onButtonClicked() {
@@ -353,7 +355,23 @@ void Smartcalc::onButtonClicked() {
     mudroFunction();
 }
 
+void Smartcalc::stonksButtonClicked() {
+  QObject *callingStonksButton = QObject::sender();
+  if (callingStonksButton == stonksButton_) {
+  QString imagePath = "stonks.jpeg";
+  QPixmap img(imagePath);
+  stonks_->setMaximumHeight(260);
+  img = img.scaledToHeight(260);
+  stonks_->setPixmap(img);
+#if defined __APPLE__ && defined __MACH__
+    creditLayout->addWidget(stonks_, 12, 0, 14, 2, Qt::AlignCenter);
+#else
+#endif
+  }
+}
+
 void Smartcalc::doEqualButton() {
+  info xinfo;
   initInfo(&xinfo);
   QString mainLine = lineEditMain_->text();
   if (mainLine.isEmpty())
@@ -362,11 +380,11 @@ void Smartcalc::doEqualButton() {
     char mainInput[512] = {'\0'};
     strncpy(mainInput, qPrintable(mainLine), 255);
     if (graphButton_->isChecked())
-      printGraph(customPlot, mainInput);
+      printGraph(customPlot, mainInput, &xinfo);
     else {
       QString xLine = lineEditX_->text();
       if (!xLine.isEmpty()) xinfo.x = lineEditX_->text().toDouble();
-      result = calc(mainInput, &xinfo);
+      double result = calc(mainInput, &xinfo);
       lineEditMain_->clear();
       if (!xinfo.err)
         lineEditMain_->setText(QString::number(result, 'f', 7));
@@ -390,7 +408,7 @@ void Smartcalc::initGraph(QCustomPlot *plot) {
                         QCP::iSelectPlottables);
 }
 
-void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
+void Smartcalc::printGraph(QCustomPlot *plot, const char *str, info *xinfo) {
   QString x1 = leftBorderLine_->text(), x2 = rightBorderLine_->text(),
           y1 = yMinLine_->text(), y2 = yMaxLine_->text();
   if (!x1.isEmpty() && !x2.isEmpty() && !y1.isEmpty() && !y2.isEmpty()) {
@@ -400,29 +418,29 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str) {
     if (xend > xstart && ytop > ydown) {
       int dots = (xend - xstart) / xstep + 1;
       for (double x = xstart; x <= xend; x += xstep) {
-        xinfo.x = x;
-        if (calc(str, &xinfo) > ytop || calc(str, &xinfo) < ydown)
+        xinfo->x = x;
+        if (calc(str, xinfo) > ytop || calc(str, xinfo) < ydown)
           dots--;
       }
 
-      xinfo.x = xstart;
+      xinfo->x = xstart;
       QVector<double> x(dots), y(dots);
-      for (int i = 0; i < dots && !xinfo.err; ++i) {
-        while (xinfo.x <= xend &&
-              (calc(str, &xinfo) > ytop || calc(str, &xinfo) < ydown))
-          xinfo.x += xstep;
-        if (fabs(xinfo.x) < 1e-7) xinfo.x = 0.0;
+      for (int i = 0; i < dots && !xinfo->err; ++i) {
+        while (xinfo->x <= xend &&
+              (calc(str, xinfo) > ytop || calc(str, xinfo) < ydown))
+          xinfo->x += xstep;
+        if (fabs(xinfo->x) < 1e-7) xinfo->x = 0.0;
 
-        x[i] = xinfo.x;
-        y[i] = calc(str, &xinfo);
+        x[i] = xinfo->x;
+        y[i] = calc(str, xinfo);
 
         if (y[i] > YMAX) y[i] = std::numeric_limits<double>::infinity();
         else if (y[i] < YMIN) y[i] = -std::numeric_limits<double>::infinity();
         else if (fabs(y[i]) < 1e-7) y[i] = 0.0;
-        xinfo.x += xstep;
+        xinfo->x += xstep;
       }
 
-      if (xinfo.err)
+      if (xinfo->err)
         lineEditMain_->setText("Cacl Error");
       else {
         plot->graph(0)->setData(x, y);
@@ -501,7 +519,6 @@ void Smartcalc::setMainCalcTexts() {
   yMinLine_->setText("-10.0");
   yMaxLine_->setText("10.0");
   stepLine_->setText("0.1");
-
   QFont f("Arial", 14, QFont::Bold);
   QFont fontX = {"Arial", 14, QFont::Bold};
   xValue_->setFont(f);
@@ -521,6 +538,14 @@ void Smartcalc::depositCalcCustom() {
   depSumLine_->setPlaceholderText(QString("$"));
   addSumLine_->setPlaceholderText(QString("$"));
   removeSumLine_->setPlaceholderText(QString("$"));
+
+  QString displayForm_ = "dd.MM.yyyy";
+  QDate thisDay = QDate::currentDate();
+  startDay_->setDate(thisDay);
+  startDay_->setDisplayFormat(displayForm_);
+  startDay_->setMinimumDate(thisDay);
+  endDay_->setMinimumDate(thisDay);
+  endDay_->setDisplayFormat(displayForm_);
 }
 
 void Smartcalc::mudroFunction() {
@@ -541,22 +566,17 @@ void Smartcalc::createCreditWidgets() {
   creditTime_ = new QLabel(tr("Loan Term"));
   interestRate_ = new QLabel(tr("Interest Rate"));
   paymentType_ = new QLabel(tr("Compound"));
-
   sumLine_ = new QLineEdit();
   yearLine_ = new QLineEdit();
   monthLine_ = new QLineEdit();
   percentLine_ = new QLineEdit();
-
   annulling_ = new QRadioButton(tr("Annually"));
   differ_ = new QRadioButton(tr("Monthly"));
-
   memLayout_ = new QHBoxLayout();
-
   outputInf_ = new QTextEdit();
   calculate_ = new QPushButton(tr("Calculate"));
-
   stonksButton_ = new QPushButton(tr("Stonks?"));
-  stonks_ = new QLabel();
+  stonks_ = new QLabel(tr("stonks"));
 }
 
 void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
@@ -601,19 +621,16 @@ void Smartcalc::onCreditCalcClicked() {
       inf.amount = sum.toDouble();
       inf.time = year.toDouble() * 12.0 + month.toDouble();
       inf.rate = rate.toDouble();
-      if (annulling_->isChecked())
-        inf.type = 'a';
-      else if (differ_->isChecked())
-        inf.type = 'd';
+      inf.type = annulling_->isChecked() ? 'a' : 'd';
       if (std::signbit(inf.amount) || std::signbit(inf.time) || std::signbit(inf.rate))
           outputInf_->setText("Error! Input values can't be negative.");
       else if (!inf.amount || !inf.time || !inf.rate)
         outputInf_->setText("| Loan Amount | Loan Term | Interest Rate | can't be 0");
       else {
-        char *out = creditCalc(&inf);
+        char *out  = creditCalc(&inf);
         QString str = out;
-        outputInf_->setText(str);
         free(out);
+        outputInf_->setText(str);
       }
     }
   }
@@ -673,32 +690,20 @@ void Smartcalc::createDepositWidgets() {
   addSum_ = new QLabel(tr("Replanish Amount"));
   removeFromDep_ = new QLabel(tr("Partial Withdrawals"));
   removeSum_ = new QLabel(tr("Remove Amount"));
-  outDepInf_ = new QTextEdit();
-
   depSumLine_ = new QLineEdit();
   depPercentLine_ = new QLineEdit();
   depTaxRateLine_ = new QLineEdit();
   addSumLine_ = new QLineEdit();
   removeSumLine_ = new QLineEdit();
-
   calcDep_ = new QPushButton(tr("Calculate"));
-
   payFreq_ = new QComboBox();
   addDep_ = new QComboBox();
   removeDep_ = new QComboBox();
   capitalization_ = new QRadioButton(tr("Capitalization"));
-
-  QDate thisDay = QDate::currentDate();
   startDay_ = new QDateEdit();
   endDay_ = new QDateEdit();
-
   dateLayout_ = new QHBoxLayout();
-  QString displayForm_ = "dd.MM.yyyy";
-  startDay_->setDate(thisDay);
-  startDay_->setDisplayFormat(displayForm_);
-  startDay_->setMinimumDate(thisDay);
-  endDay_->setMinimumDate(thisDay);
-  endDay_->setDisplayFormat(displayForm_);
+  outDepInf_ = new QTextEdit();
 }
 
 void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
@@ -733,14 +738,15 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   dateLayout_->addWidget(endDay_, 1);
   endDay_->setMaximumWidth(130);
   dateLayout_->addStretch();
+}
 
+void Smartcalc::setBoxItems() {
   payFreq_->addItem("every day");
   payFreq_->addItem("every week");
   payFreq_->addItem("every month");
   payFreq_->addItem("every quarter");
   payFreq_->addItem("every 6 month");
   payFreq_->addItem("every year");
-
   addDep_->addItem("no replanishment");
   addDep_->addItem("every month");
   addDep_->addItem("every 2 month");
@@ -748,7 +754,6 @@ void Smartcalc::addDepositWidgetsToLayout(QGridLayout *layout) {
   addDep_->addItem("every 4 month");
   addDep_->addItem("every 6 month");
   addDep_->addItem("every year");
-
   removeDep_->addItem("no withdrawals");
   removeDep_->addItem("every month");
   removeDep_->addItem("every 2 month");

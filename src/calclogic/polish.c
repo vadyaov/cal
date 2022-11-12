@@ -78,13 +78,13 @@ char *pretty_input(const char *input, int *error) {
   const char *buf = input;
   char *perfect = NULL;
   char *no_del_input = NULL;
-  int i = 0, bad = 0;
-  while (buf[i] != '\0' && !bad) {
+  int i = 0;
+  while (buf[i] != '\0' && !*error) {
     if (is_valid_symb(buf[i], symbols)) symbols_count++;
-    if (is_bad_symb(buf[i], symbols)) bad = 1;
+    if (is_bad_symb(buf[i], symbols)) *error = 1;
     i++;
   }
-  if (!bad) {
+  if (!*error) {
     no_del_input = calloc(symbols_count + 1, sizeof(char));
     if (no_del_input) {
       int j = 0;
@@ -99,8 +99,7 @@ char *pretty_input(const char *input, int *error) {
       perfect = space_btw(no_del_input, error);
       free(no_del_input);
     }
-  } else
-    *error = 1;
+  }
   return perfect;
 }
 

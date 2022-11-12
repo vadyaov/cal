@@ -19,4 +19,4 @@ void print_stack_n(struct stack_n* root);
 
 */
 
-#endif  // _SRC_STACK_H
+#endif /*   _SRC_STACK_H */

@@ -45,20 +45,3 @@ void initCreditInfo(creditInfo *info) {
   info->rate = 0;
   info->type = 0;
 }
-
-void printCreditStruct(creditInfo *inf) {
-  printf("amount = %lf\ntime = %lf\nrate = %lf\ntype = %c\n", inf->amount,
-         inf->time, inf->rate, inf->type);
-}
-/*
-int main() {
-  creditInfo mycredit;
-  initCreditInfo(&mycredit);
-  mycredit.amount = 1000000;
-  mycredit.time = 48;
-  mycredit.rate = 6.6;
-  mycredit.type = 'd';
-  creditCalc(&mycredit);
-  return 0;
-}
-*/
