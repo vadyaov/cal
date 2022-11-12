@@ -366,6 +366,7 @@ void Smartcalc::stonksButtonClicked() {
 #if defined __APPLE__ && defined __MACH__
     creditLayout->addWidget(stonks_, 12, 0, 14, 2, Qt::AlignCenter);
 #else
+    creditLayout->addWidget(stonks_, 14, 0, 16, 2, Qt::AlignCenter);
 #endif
   }
 }
@@ -598,7 +599,6 @@ void Smartcalc::addCreditWidgetsToLayout(QGridLayout *layout) {
   layout->addLayout(memLayout_, 4, 0, 4, 2);
   memLayout_->addWidget(calculate_, 0);
   memLayout_->addStretch(1);
-  memLayout_->addWidget(stonksButton_, 2);
 
   creditSum_->setMinimumWidth(160);
 }
@@ -617,6 +617,7 @@ void Smartcalc::onCreditCalcClicked() {
     else if (rate.isEmpty())
       outputInf_->setText("Enter the Interest Rate!");
     else {
+      memLayout_->addWidget(stonksButton_, 2);
       initCreditInfo(&inf);
       inf.amount = sum.toDouble();
       inf.time = year.toDouble() * 12.0 + month.toDouble();

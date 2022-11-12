@@ -7,7 +7,7 @@ int main() {
 
   SRunner *r1;
 
-  s1 = polishSuite();
+  s1 = SmartCalcSuite();
   r1 = srunner_create(s1);
   srunner_set_fork_status(r1, CK_NOFORK);
   srunner_run_all(r1, CK_NORMAL);

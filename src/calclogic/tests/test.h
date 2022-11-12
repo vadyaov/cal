@@ -1,9 +1,8 @@
 #include <check.h>
 
-#include "../polish.h"
 #include "../calc.h"
 #include "../credit.h"
 #include "../deposit.h"
+#include "../polish.h"
 
-Suite *polishSuite();
-
+Suite *SmartCalcSuite();
