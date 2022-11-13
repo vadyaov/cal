@@ -1,11 +1,6 @@
-#ifndef SMARTCALC_H
-#define SMARTCALC_H
+#ifndef _SRC_GUI_SMARTCALC_H
+#define _SRC_GUI_SMARTCALC_H
 
-//#include <QtWidgets>
-//#include <QPainterPath>
-//#include <QWidget>
-//#include <QDate>
-//#include <QDateEdit>
 #include "qcustomplot.h"
 
 extern "C" {
@@ -13,21 +8,7 @@ extern "C" {
 #include "../calclogic/credit.h"
 #include "../calclogic/deposit.h"
 }
-/*
-class QGridLayout;
-class QPushButton;
-class QLineEdit;
-class QRadioButton;
-class QLabel;
-class QFont;
-class QString;
-class QCustomPlot;
-class QStyle;
-class QPixmap;
-class QTabWidget;
-class QDate;
-class QDateEdit;
-*/
+
 #define YMIN -1000000.0
 #define YMAX 1000000.0
 
@@ -54,7 +35,8 @@ class Smartcalc : public QWidget {
       *Mudro_;
   QLineEdit *lineEditMain_, *lineEditX_, *leftBorderLine_, *rightBorderLine_,
       *stepLine_, *yMinLine_, *yMaxLine_;
-  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *yMin, *yMax, *wiseTree_;
+  QLabel *xValue_, *leftBorder_, *rightBorder_, *step_, *yMin, *yMax,
+      *wiseTree_;
   QCustomPlot *customPlot;
   QRadioButton *graphButton_;
 
@@ -70,9 +52,9 @@ class Smartcalc : public QWidget {
   /* -----------------------DepositCalc Widgets--------------------------*/
 
   QLabel *depositSum_, *depositTime_, *depInterestRate_, *depTaxRate_,
-         *payFrequency_, *addToDep_, *addSum_, *removeFromDep_, *removeSum_;
+      *payFrequency_, *addToDep_, *addSum_, *removeFromDep_, *removeSum_;
   QLineEdit *depSumLine_, *depPercentLine_, *depTaxRateLine_, *addSumLine_,
-            *removeSumLine_;
+      *removeSumLine_;
   QTextEdit *outDepInf_;
   QRadioButton *capitalization_;
   QComboBox *payFreq_, *addDep_, *removeDep_;
@@ -120,7 +102,6 @@ class Smartcalc : public QWidget {
   void depositCalcCustom();
   void onDepositCalcClicked();
   void deleteDepositCalc();
-
 };
 
-#endif  // SMARTCALC_H
+#endif /*  _SRC_GUI_SMARTCALC_H */
