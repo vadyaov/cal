@@ -4,23 +4,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *polish(const char *input, int *err);
+char *polish(const char *, int *);
 
-char *pretty_input(const char *input, int *error);
-int is_valid_symb(char c, const char *symbols);
-int is_bad_symb(char c, const char *symbols);
-char hash(const char *src, int *n, int *replace);
-int count_bracket(const char *src);
-int is_number(char c);
-int is_letter(char c);
-int is_operator(char c);
-int is_operator_not_bracket(char c);
-int is_function(char c);
-char *put_in_out(const char *number_pointer, char *output, int *i, int *err);
-char *space_btw(char *src, int *error);
-int fspaces(const char *src);
-int fsymbol(const char *src);
-int give_priority(char c);
-void find_unary(char *src);
+char *pretty_input(const char *, int *);
+int is_valid_symb(char, const char *);
+int is_bad_symb(char, const char *);
+char hash(const char *, int *, int *);
+int count_bracket(const char *);
+int is_number(char);
+int is_letter(char);
+int is_operator(char);
+int is_operator_not_bracket(char);
+int is_function(char);
+char *put_in_out(const char *, char *, int *, int *);
+char *space_btw(char *, int *);
+int fspaces(const char *);
+int fsymbol(const char *);
+int give_priority(char);
+void find_unary(char *);
 
 #endif /* _SRC_CALCLOGIC_POLISH_H */

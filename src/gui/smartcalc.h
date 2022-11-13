@@ -71,10 +71,10 @@ class Smartcalc : public QWidget {
   void createOther();
   void setFrames();
   void addTabs();
-  void addWidgetsToLayout(QGridLayout *layout);
+  void addWidgetsToLayout(QGridLayout *);
   void doEqualButton();
-  void initGraph(QCustomPlot *plot);
-  void printGraph(QCustomPlot *plot, const char *str, info *xinfo);
+  void initGraph(QCustomPlot *);
+  void printGraph(QCustomPlot *, const char *, info *);
   void setMainCalcAlignments();
   void setMainCalcWidths();
   void setMainCalcSkins();
@@ -84,12 +84,13 @@ class Smartcalc : public QWidget {
   void connectWidgets();
   void customWidgets();
   void deleteBasicCalc();
+  bool skipPoint(double, double, double, double, info *);
 
   /* -----------------------CreditCalc Slots---------------------------*/
 
   void creditCalcCustom();
   void createCreditWidgets();
-  void addCreditWidgetsToLayout(QGridLayout *layout);
+  void addCreditWidgetsToLayout(QGridLayout *);
   void onCreditCalcClicked();
   void stonksButtonClicked();
   void deleteCreditCalc();
@@ -97,7 +98,7 @@ class Smartcalc : public QWidget {
   /* -----------------------DepositCalc Slots--------------------------*/
 
   void createDepositWidgets();
-  void addDepositWidgetsToLayout(QGridLayout *layout);
+  void addDepositWidgetsToLayout(QGridLayout *);
   void setBoxItems();
   void depositCalcCustom();
   void onDepositCalcClicked();

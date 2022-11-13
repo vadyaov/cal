@@ -8,15 +8,7 @@ struct stack_n {
   struct stack_n* next;
 };
 
-void push_n(struct stack_n** root, double num);
+void push_n(struct stack_n**, double);
 double pop_n(struct stack_n** root);
-
-/*
-
-double peek_n(struct stack_n* root);
-void destroy_n(struct stack_n** root);
-void print_stack_n(struct stack_n* root);
-
-*/
 
 #endif /*   _SRC_STACK_H */

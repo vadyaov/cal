@@ -11,7 +11,7 @@ typedef struct credit {
   char type;
 } creditInfo;
 
-char *creditCalc(creditInfo *input);
-void initCreditInfo(creditInfo *info);
+char *creditCalc(creditInfo *);
+void initCreditInfo(creditInfo *);
 
 #endif /*  _SRC_CALCLOGIC_CREDIT_H */

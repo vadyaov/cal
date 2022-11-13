@@ -416,29 +416,29 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str, info *xinfo) {
            xstep = stepLine_->text().toDouble(), ydown = y1.toDouble(),
            ytop = y2.toDouble();
     if (xend > xstart && ytop > ydown) {
-      int dots = (xend - xstart) / xstep + 1;
+      unsigned int dots = (xend - xstart) / xstep + 1;
       for (double x = xstart; x <= xend; x += xstep) {
         xinfo->x = x;
-        if (calc(str, xinfo) > ytop || calc(str, xinfo) < ydown) dots--;
+        double r = calc(str, xinfo);
+        if (skipPoint(r, xend, ytop, ydown, xinfo)) dots--;
       }
-
       xinfo->x = xstart;
       QVector<double> x(dots), y(dots);
-      for (int i = 0; i < dots && !xinfo->err; ++i) {
-        while (xinfo->x <= xend &&
-               (calc(str, xinfo) > ytop || calc(str, xinfo) < ydown))
+      for (unsigned int i = 0; i < dots && !xinfo->err; ++i) {
+        double res = calc(str, xinfo);
+        while (skipPoint(res, xend, ytop, ydown, xinfo)) {
           xinfo->x += xstep;
-        if (fabs(xinfo->x) < 1e-7) xinfo->x = 0.0;
+          res = calc(str, xinfo);
+        }
 
         x[i] = xinfo->x;
-        y[i] = calc(str, xinfo);
+        y[i] = res;
 
         if (y[i] > YMAX)
           y[i] = std::numeric_limits<double>::infinity();
         else if (y[i] < YMIN)
           y[i] = -std::numeric_limits<double>::infinity();
-        else if (fabs(y[i]) < 1e-7)
-          y[i] = 0.0;
+
         xinfo->x += xstep;
       }
 
@@ -455,6 +455,12 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str, info *xinfo) {
   } else {
     lineEditMain_->setText("Range lines can't be empty!");
   }
+}
+
+bool Smartcalc::skipPoint(double res, double xend, double ytop, double ydown,
+                          info *xinfo) {
+  return (xinfo->x <= xend && ((res - ytop > 1e-7 && res < YMAX) ||
+                               (res - ydown < -1e-7 && res > YMIN)));
 }
 
 void Smartcalc::onCreditCalcClicked() {

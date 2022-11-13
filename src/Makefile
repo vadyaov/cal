@@ -41,6 +41,7 @@ create_dirs:
 
 cpy_files:
 	cp CMakeLists.txt $(ARCHIVE)/src
+	cp documentation.texi $(ARCHIVE)/src
 	cp Makefile $(ARCHIVE)/src
 	cp $(CURR_DIR)/calclogic/*c $(ARCHIVE)/src/calclogic
 	cp $(CURR_DIR)/calclogic/*h $(ARCHIVE)/src/calclogic

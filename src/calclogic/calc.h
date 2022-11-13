@@ -11,10 +11,10 @@ typedef struct xinfo {
   int err;
 } info;
 
-double calc(const char *polishString, info *info);
-double convert_to_double(char *src, int *i);
-int makeOperator(struct stack_n **root, char s);
-int makeFunction(struct stack_n **root, char s);
-void initInfo(info *data);
+double calc(const char *, info *);
+double convert_to_double(char *, int *);
+int makeOperator(struct stack_n **, char);
+int makeFunction(struct stack_n **, char);
+void initInfo(info *);
 
 #endif /* _SRC_CALCLOGIC_CALC_H */

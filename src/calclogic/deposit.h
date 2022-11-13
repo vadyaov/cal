@@ -13,14 +13,14 @@ typedef struct depInfo {
   bool cap;
 } deposit;
 
-char *depcalc(deposit *depo);
-void initDeposit(deposit *depo);
-size_t days(const char *startDate, const char *endDate);
-int toNumber(const char *p, int n);
-size_t yulian(int day, int month, int year);
-char chooseFrequency(const char *str);
+char *depcalc(deposit *);
+void initDeposit(deposit *);
+size_t days(const char *, const char *);
+int toNumber(const char *, int);
+size_t yulian(int, int, int);
+char chooseFrequency(const char *);
 
-void calcDepo(deposit *depo, double *percents, double *tax, double *money);
-double daysFrequency(char c);
+void calcDepo(deposit *, double *, double *, double *);
+double daysFrequency(char);
 
 #endif /*   _SRC_CALCLOGIC_DEPOSIT_H */
