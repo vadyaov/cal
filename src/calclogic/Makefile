@@ -75,14 +75,14 @@ gcov_test: $(calclib_gcov) $(TEST_MAIN_OBJ) $(TEST_OBJS)
 	$(CC) $(TEST_OBJS) $(TEST_MAIN_OBJ) $(GCOV_FLAGS) -o tests/test_gcov $(TST_LIBS) -L. $<
 
 clean:
-	rm -f $(SRC_OBJS) 
-	rm -f $(TEST_ALL_OBJS) 
-	rm -f $(calclib) $(calclib_gcov) 
-	rm -f coverage.info
-	rm -f $(GCDA) $(GCNO)
-	rm -f ./tests/test
-	rm -f ./tests/test_gcov
-	rm -rf ./objects/ ./tests/objects/ ./coverage/
+	@rm -f $(SRC_OBJS) 
+	@rm -f $(TEST_ALL_OBJS) 
+	@rm -f $(calclib) $(calclib_gcov) 
+	@rm -f coverage.info
+	@rm -f $(GCDA) $(GCNO)
+	@rm -f ./tests/test
+	@rm -f ./tests/test_gcov
+	@rm -rf ./objects/ ./tests/objects/ ./coverage/
 
 valgrind:
 	valgrind --leak-check=full ./tests/test
