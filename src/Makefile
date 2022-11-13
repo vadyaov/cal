@@ -26,6 +26,10 @@ dist: create_dirs cpy_files
 	mv $(ARCHIVE).tgz $(CURR_DIR)/..
 	$(RM) -r $(ARCHIVE)
 
+dvi:
+	makeinfo documentation.texi --html
+	open ./manual/index.html
+
 create_dirs:
 	@$(RM) -r $(ARCHIVE)
 	@$(MK) $(ARCHIVE)
@@ -54,4 +58,5 @@ gcov_report:
 
 clean: uninstall
 	@cd $(LOGIC_DIR) ; make clean ; cd ./..
+	@$(RM) -r manual/
 
