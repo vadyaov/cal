@@ -1,6 +1,5 @@
 #include "smartcalc.h"
 
-// Constructor for main widget
 Smartcalc::Smartcalc(QWidget *parent) : QWidget(parent) {
   createWidgets();
   initGraph(customPlot);
@@ -459,8 +458,8 @@ void Smartcalc::printGraph(QCustomPlot *plot, const char *str, info *xinfo) {
 
 bool Smartcalc::skipPoint(double res, double xend, double ytop, double ydown,
                           info *xinfo) {
-  return (xinfo->x <= xend && ((res - ytop > 1e-7 && res < YMAX) ||
-                               (res - ydown < -1e-7 && res > YMIN)));
+  return (xinfo->x <= xend && ((res - ytop > EPSL && res < YMAX) ||
+                               (res - ydown < -EPSL && res > YMIN)));
 }
 
 void Smartcalc::onCreditCalcClicked() {
@@ -715,23 +714,24 @@ void Smartcalc::deleteBasicCalc() {
   delete buttonLn_;
   delete buttonLog_;
   delete buttonSqrt_;
+  delete Mudro_;
   delete lineEditMain_;
   delete lineEditX_;
-  delete graphButton_;
+  delete leftBorderLine_;
+  delete rightBorderLine_;
+  delete stepLine_;
+  delete yMinLine_;
+  delete yMaxLine_;
   delete xValue_;
-  delete customPlot;
   delete leftBorder_;
   delete rightBorder_;
   delete step_;
-  delete leftBorderLine_;
-  delete rightBorderLine_;
-  delete yMinLine_;
-  delete yMaxLine_;
   delete yMin;
   delete yMax;
-  delete stepLine_;
-  delete Mudro_;
   delete wiseTree_;
+  delete customPlot;
+  delete graphButton_;
+
   delete mainLayout;
 }
 
@@ -742,13 +742,15 @@ void Smartcalc::deleteCreditCalc() {
   delete creditTime_;
   delete interestRate_;
   delete paymentType_;
+  delete stonks_;
   delete sumLine_;
   delete yearLine_;
   delete monthLine_;
   delete percentLine_;
   delete outputInf_;
-  delete stonks_;
+  delete calculate_;
   delete stonksButton_;
+
   delete memLayout_;
   delete creditLayout;
 }
@@ -768,13 +770,15 @@ void Smartcalc::deleteDepositCalc() {
   delete depTaxRateLine_;
   delete addSumLine_;
   delete removeSumLine_;
+  delete outDepInf_;
   delete capitalization_;
   delete payFreq_;
   delete addDep_;
   delete removeDep_;
+  delete calcDep_;
   delete startDay_;
   delete endDay_;
-  delete calcDep_;
+
   delete dateLayout_;
   delete depositLayout;
 }

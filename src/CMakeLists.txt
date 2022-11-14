@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 CONFIG REQUIRED COMPONENTS Widgets PrintSupport)
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets PrintSupport)
 
 add_executable(smartcalc
   gui/smartcalc.cpp
@@ -22,4 +22,4 @@ add_executable(smartcalc
   calclogic/stack_symb.c
   calclogic/stack_numb.c)
 
-target_link_libraries(smartcalc Qt5::Widgets Qt5::PrintSupport)
+target_link_libraries(smartcalc Qt6::Widgets Qt6::PrintSupport)

@@ -11,6 +11,7 @@ extern "C" {
 
 #define YMIN -1000000.0
 #define YMAX 1000000.0
+#define EPSL 1e-7
 
 class Smartcalc : public QWidget {
   Q_OBJECT

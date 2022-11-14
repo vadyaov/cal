@@ -101,17 +101,29 @@ The graph will appear.
 The calculator has a special mode of operation: Credit Calculator.
 
 The credit calculator window contains the following fields:
-
-- Loan Amount - the desired loan amount.
-- Loan Term - set in months, supports only integer values.
-- Interest Rate - the desired interest rate. Set as an integer or a floating-point number.
-- Annulling button - for annulling payments
-- Monthly button - for differentiated payments
-
+@enumerate
+@item
+Loan Amount - the desired loan amount.
+@item
+Loan Term - set in months, supports only integer values.
+@item
+Interest Rate - the desired interest rate. Set as an integer or a floating-point number.
+@item
+Annulling button - for annulling payments.
+@item
+Monthly button - for differentiated payments.
+@end enumerate
 Output Fields: 
-- Monthly payment
-- Overpayment on the loan (interest)
-- The total amount to be paid.
+@enumerate
+@item
+Monthly payment.
+@item
+Overpayment on the loan (interest).
+@item
+The total amount to be paid.
+@end enumerate
+
+Press 'Calculate' to see the result.
 
 @node Deposit calculator
 @chapter Deposit calculator
@@ -119,21 +131,37 @@ Output Fields:
 The calculator has a special mode of operation: Deposit Calculator.
 
 The deposit calculator window contains the following fields:
-
-- Deposit Amount - the initial deposit amount.
-- Deposit Term - for how long you plan to invest money. Input the day when you open deposit and the day of closing deposit.
-- Interest Rate - the percentage at which you invest money.
-- Tax Rate - the current key rate of the Central Bank is set.
-- Frequency of Payments - you can choose 'every day', 'every week', 'every month', 'every quarter', 'every 6 month', 'every year'.
-- Capitalization - activate the radiobutton if interest is credited to the account.
-- Depo Replanishment - you can choose the frequency of replanishments such as in Frequency of Payments.
-- Replanishment Amount - how much money you want to replanish every period.
-- Partial Withdrawals - you can choose the frequency of replanishments such as in Frequency of Payments.
-- Remove Amount - how much money you want to remove  every period.
+@enumerate 
+@item
+Deposit Amount - the initial deposit amount.
+@item
+Deposit Term - for how long you plan to invest money. Input the day when you open deposit and the day of closing deposit.
+@item
+Interest Rate - the percentage at which you invest money.
+@item
+Tax Rate - the current key rate of the Central Bank is set.
+@item
+Frequency of Payments - you can choose 'every day', 'every week', 'every month', 'every quarter', 'every 6 month', 'every year'.
+@item
+Capitalization - activate the radiobutton if interest is credited to the account.
+@item
+Depo Replanishment - you can choose the frequency of replanishments such as in Frequency of Payments.
+@item
+Replanishment Amount - how much money you want to replanish every period.
+@item
+Partial Withdrawals - you can choose the frequency of replanishments such as in Frequency of Payments.
+@item
+Remove Amount - how much money you want to remove  every period.
+@end enumerate
 
 Output fields:
-- Accrued interest.
-- The amount of tax.
-- The amount of deposit by the end of the deposit period.
+@enumerate
+@item
+Accrued interest.
+@item
+The amount of tax.
+@item
+The amount of deposit by the end of the deposit period.
+@end enumerate
 
 @bye

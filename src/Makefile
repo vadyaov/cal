@@ -8,7 +8,7 @@ MK := mkdir -p
 EXEC := smartcalc
 ARCHIVE := $(CURR_DIR)/$(EXEC)
 
-all: install run
+all: tests install run
 
 install:
 	@$(MK) $(BUILD_DIR)
